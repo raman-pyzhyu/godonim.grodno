@@ -32,10 +32,8 @@
 
                 let labels = [[${labels}]];
 
-                console.log(labels);
-
                 labels.forEach(function (value) {
-                    myMap.geoObjects.add(new ymaps.Placemark(value.coordinate.split(','), {
+                    myMap.geoObjects.add(new ymaps.Placemark(value.coordinates.split(','), {
                         balloonContent: value.description
                     }, {
                         preset: value.category
@@ -57,7 +55,6 @@
                         contentBody:'<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Добавить метку</button>',
                     });
                 })
-
             }
 
             /*]]>*/
@@ -73,18 +70,18 @@
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <form>
+                <form th:action="@{'/add_label'}" method="post">
                     <div>
                         <label for="labelName" class="form-label">Название метки</label>
-                        <input class="form-control" type="text" placeholder="Название метки" aria-label="Название метки" id="labelName">
+                        <input class="form-control" type="text" placeholder="Название метки" aria-label="Название метки" name="labelName" id="labelName">
                     </div>
                     <div>
                         <label for="labelImage" class="form-label">Изображение метки(опционально)</label>
-                        <input class="form-control" type="file" accept="image/jpeg" id="labelImage">
+                        <input class="form-control" type="file" accept="image/jpeg" name="labelImage" id="labelImage">
                     </div>
                     <div>
                         <label for="labelType" class="form-label">Выберите тип метки</label>
-                        <select class="form-select" aria-label="Выберите тип метки" id="labelType">
+                        <select class="form-select" aria-label="Выберите тип метки" name="labelType" id="labelType">
                             <option selected value="1">История</option>
                             <option value="2">Биография</option>
                             <option value="3">Фото</option>
@@ -93,10 +90,10 @@
                     </div>
                     <div class="mb-3">
                         <label for="labelContent" class="form-label">Описание метки</label>
-                        <textarea class="form-control" id="labelContent"></textarea>
+                        <textarea class="form-control" name="labelContent" id="labelContent"></textarea>
                     </div>
-                    <input type="hidden" id="coordsInput">
-                    <input type="hidden" id="streetInput">
+                    <input type="hidden" name="coordinates" id="coordsInput">
+                    <input type="hidden" name="street" id="streetInput">
                     <button type="submit" class="btn btn-outline-success">Добавить</button>
                 </form>
             </div>
