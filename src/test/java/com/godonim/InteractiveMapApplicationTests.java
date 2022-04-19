@@ -1,4 +1,4 @@
-package com.grsu.map;
+package com.godonim;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
