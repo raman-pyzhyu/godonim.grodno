@@ -33,8 +33,6 @@
                 console.log(labels);
 
                 labels.forEach(function (value) {
-                    console.log(value)
-                    console.log('coords:' + value.coordinate);
                     myMap.geoObjects.add(new ymaps.Placemark(value.coordinate.split(','), {
                         balloonContent: value.description
                     }, {
@@ -45,6 +43,14 @@
                 myMap.events.add('click', function (e) {
                     coords = e.get('coords');
                     document.getElementById('coordsInput').value = coords;
+                    let geocoder = ymaps.geocode(coords, {
+                        kind: 'street'
+                    });
+                    geocoder.then(
+                        function (res) {
+                            document.getElementById('streetInput').value = res.geoObjects.get(0).getThoroughfare();
+                        }
+                    );
                     myMap.balloon.open(coords, {
                         contentBody:'<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Добавить метку</button>',
                     });
@@ -67,6 +73,10 @@
             <div class="offcanvas-body">
                 <form>
                     <div>
+                        <label for="labelName" class="form-label">Название метки</label>
+                        <input class="form-control" type="text" placeholder="Название метки" aria-label="Название метки" id="labelName">
+                    </div>
+                    <div>
                         <label for="labelImage" class="form-label">Изображение метки(опционально)</label>
                         <input class="form-control" type="file" accept="image/jpeg" id="labelImage">
                     </div>
@@ -84,6 +94,7 @@
                         <textarea class="form-control" id="labelContent"></textarea>
                     </div>
                     <input type="hidden" id="coordsInput">
+                    <input type="hidden" id="streetInput">
                     <button type="submit" class="btn btn-outline-success">Добавить</button>
                 </form>
             </div>
