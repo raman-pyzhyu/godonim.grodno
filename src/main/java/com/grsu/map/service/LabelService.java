@@ -1,14 +1,13 @@
 package com.grsu.map.service;
 
-import com.grsu.map.domain.Media;
 import com.grsu.map.domain.Label;
-import com.grsu.map.repository.MediaRepository;
+import com.grsu.map.domain.Media;
 import com.grsu.map.repository.LabelRepository;
+import com.grsu.map.repository.MediaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class LabelService {
@@ -41,11 +40,6 @@ public class LabelService {
     }
 
     public List<Label> searchLabel(String search, String searchType) {
-        List<Label> labels = getLabels();
-        return labels.stream()
-                .filter(label -> searchType.equals("") || label.getType().equals(searchType))
-                .filter(label -> search.equals("") || (label.getName().toLowerCase().contains(search.toLowerCase())
-                        || label.getDescription().toLowerCase().contains(search.toLowerCase())))
-                .collect(Collectors.toList());
+        return labelRepository.getLabels(search, searchType);
     }
 }
