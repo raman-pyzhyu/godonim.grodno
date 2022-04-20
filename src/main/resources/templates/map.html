@@ -34,6 +34,12 @@
 
                 labels.forEach(function (value) {
                     myMap.geoObjects.add(new ymaps.Placemark(value.coordinates.split(','), {
+                        id: value.id,
+                        coords: value.coordinates,
+                        name: value.name,
+                        street: value.street,
+                        type: value.type,
+                        image: value.image,
                         balloonContent: value.description
                     }, {
                         preset: value.category
@@ -55,14 +61,74 @@
                         contentBody:'<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Добавить метку</button>',
                     });
                 })
+
+                myMap.geoObjects.events.add('contextmenu', function (e) {
+                    let label = e.get('target');
+                    coords = label.properties._data.coords.split(',')
+                    document.getElementById('coordsInput').value = coords
+                    document.getElementById('streetInput').value = label.properties._data.street
+                    document.getElementById('labelName').value = label.properties._data.name
+                    //document.getElementById('labelImage').value = label.properties._data.image
+                    document.getElementById('labelType').value = label.properties._data.type
+                    document.getElementById('labelId').value = label.properties._data.id
+                   // document.getElementById('labelContent').value = label.properties._data.balloonContent
+                    tinyMCE.activeEditor.execCommand("mceInsertContent", false, label.properties._data.balloonContent);
+
+                    myMap.balloon.open(coords, {
+                        contentBody:'<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Изменить метку</button>',
+                    });
+                })
+
             }
 
             /*]]>*/
         </script>
     </head>
-    <body>
-        <div id="map"></div>
-
+    <body><!-- Создаем меню -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Интерактивная карта города Гродно</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Переключатель навигации">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Биография</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Фото</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Видео</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">История</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Объект</a>
+                    </li>
+                </ul>
+                <form th:action="@{'/search'}" method="post">
+                    <div style=" margin-left: 400px; display: inline-flex;">
+                        <input class="form-control" placeholder="Поиск" type="search" id="site-search" name="search">
+                        <div>
+                            <select class="form-select" aria-label="Выберите тип метки" name="searchType">
+                                <option value="">Тип метки</option>
+                                <option value="1">История</option>
+                                <option value="2">Биография</option>
+                                <option value="3">Фото</option>
+                                <option value="4">Видео</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div id="map"></div>
         <!--OFFCANVAS-->
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
             <div class="offcanvas-header">
@@ -94,7 +160,8 @@
                     </div>
                     <input type="hidden" name="coordinates" id="coordsInput">
                     <input type="hidden" name="street" id="streetInput">
-                    <button type="submit" class="btn btn-outline-success">Добавить</button>
+                    <input type="hidden" name="id" id="labelId">
+                    <button type="submit" class="btn btn-outline-success">Сохранить</button>
                 </form>
             </div>
         </div>

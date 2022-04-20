@@ -30,6 +30,7 @@ public class MapController {
 
     @PostMapping("/add_label")
     public String addLabel(
+            @RequestParam(defaultValue = "0") long id,
             @RequestParam String labelName,
             @RequestParam String street,
             @RequestParam String labelContent,
@@ -39,7 +40,7 @@ public class MapController {
             @RequestParam(required = false) String mediaType,
             @RequestParam(required = false) String mediaContent
     ) {
-        Label label = labelService.getLabel(0).orElseGet(Label::new);
+        Label label = labelService.getLabel(id).orElseGet(Label::new);
         label.setName(labelName);
         label.setImage(labelImage);
         label.setDescription(labelContent);
@@ -55,7 +56,7 @@ public class MapController {
     }
 
     @PostMapping("/delete_label")
-    public String deletelabel(@RequestParam long id) {
+    public String deleteLabel(@RequestParam long id) {
         labelService.deleteLabel(id);
         return "redirect:/map";
     }
@@ -63,8 +64,7 @@ public class MapController {
     @PostMapping("/search")
     public String search(@RequestParam String search, @RequestParam String searchType, Model model) {
         List<Label> result = labelService.searchLabel(search, searchType);
-        model.addAttribute("result", result);
-        System.out.println(result);
+        model.addAttribute("labels", result);
         return "map";
     }
 }
