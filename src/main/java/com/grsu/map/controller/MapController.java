@@ -22,6 +22,10 @@ public class MapController {
         this.labelService = labelService;
     }
 
+    @GetMapping("/")
+    public String start() {
+        return "redirect:/map";
+    }
 
     @GetMapping("/map")
     public String getMap(Model model, Authentication authentication) {
@@ -69,5 +73,26 @@ public class MapController {
         List<Label> result = labelService.searchLabel(search, searchType);
         model.addAttribute("labels", result);
         return "map";
+    }
+
+    @GetMapping("/biography")
+    public String getBiographies(Model model) {
+        List<Label> labels = labelService.getLabels();
+        model.addAttribute("labels", labels);
+        return "biography";
+    }
+
+    @GetMapping("/photo")
+    public String getPhotos(Model model) {
+        List<Label> labels = labelService.getLabels();
+        model.addAttribute("labels", labels);
+        return "photo";
+    }
+
+    @GetMapping("/video")
+    public String getVideos(Model model) {
+        List<Label> labels = labelService.getLabels();
+        model.addAttribute("labels", labels);
+        return "video";
     }
 }
