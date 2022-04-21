@@ -2,6 +2,7 @@ package com.grsu.map.controller;
 
 import com.grsu.map.domain.Label;
 import com.grsu.map.service.LabelService;
+import org.springframework.security.core.Authentication;
 import com.grsu.map.service.MediaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,8 +30,9 @@ public class MapController {
     }
 
     @GetMapping("/map")
-    public String getMap(Model model) {
+    public String getMap(Model model, Authentication authentication) {
         List<Label> labels = labelService.getLabels();
+        model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
         model.addAttribute("labels", labels);
         return "map";
     }
