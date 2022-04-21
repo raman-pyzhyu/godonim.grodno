@@ -1,7 +1,6 @@
 package com.grsu.map.service;
 
 import com.grsu.map.domain.Label;
-import com.grsu.map.domain.Media;
 import com.grsu.map.repository.LabelRepository;
 import com.grsu.map.repository.MediaRepository;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,7 @@ public class LabelService {
         this.mediaRepository = mediaRepository;
     }
 
-    public void addLabel(Label label, Media media) {
-        media.setLabel(label);
-        mediaRepository.save(media);
+    public void addLabel(Label label) {
         labelRepository.save(label);
 
     }
@@ -36,7 +33,12 @@ public class LabelService {
     }
 
     public void deleteLabel(long id) {
-        labelRepository.deleteById(id);
+        mediaRepository.findAll().forEach(media -> {
+            if (media.getLabel().equals(labelRepository.findById(id).orElseGet(Label::new))) {
+                mediaRepository.deleteById(media.getId());
+            }
+        });
+
     }
 
     public List<Label> searchLabel(String search, String searchType) {

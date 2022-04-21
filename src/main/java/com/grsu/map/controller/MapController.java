@@ -1,13 +1,14 @@
 package com.grsu.map.controller;
 
-import com.grsu.map.domain.Media;
 import com.grsu.map.domain.Label;
 import com.grsu.map.service.LabelService;
+import com.grsu.map.service.MediaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,9 +16,11 @@ import java.util.List;
 public class MapController {
 
     private final LabelService labelService;
+    private final MediaService mediaService;
 
-    public MapController(LabelService labelService) {
+    public MapController(LabelService labelService, MediaService mediaService) {
         this.labelService = labelService;
+        this.mediaService = mediaService;
     }
 
     @GetMapping("/")
@@ -42,7 +45,7 @@ public class MapController {
             @RequestParam String labelType,
             @RequestParam String coordinates,
             @RequestParam(required = false) String mediaType,
-            @RequestParam(required = false) String mediaContent
+            @RequestParam(required = false) MultipartFile mediaContent
     ) {
         Label label = labelService.getLabel(id).orElseGet(Label::new);
         label.setName(labelName);
@@ -52,10 +55,9 @@ public class MapController {
         label.setCoordinates(coordinates);
         label.setStreet(street);
 
-        Media media = new Media();
-        media.setType(mediaType);
-        media.setMedia(mediaContent);
-        labelService.addLabel(label, media);
+     //   mediaService.addMedia(mediaContent, mediaType, label);
+
+        labelService.addLabel(label);
         return "redirect:/map";
     }
 
