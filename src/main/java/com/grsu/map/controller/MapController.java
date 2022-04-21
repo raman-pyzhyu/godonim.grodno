@@ -3,6 +3,8 @@ package com.grsu.map.controller;
 import com.grsu.map.domain.Media;
 import com.grsu.map.domain.Label;
 import com.grsu.map.service.LabelService;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +24,9 @@ public class MapController {
 
 
     @GetMapping("/map")
-    public String getMap(Model model) {
+    public String getMap(Model model, Authentication authentication) {
         List<Label> labels = labelService.getLabels();
+        model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
         model.addAttribute("labels", labels);
         return "map";
     }
