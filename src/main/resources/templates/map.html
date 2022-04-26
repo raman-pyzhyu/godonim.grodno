@@ -90,11 +90,13 @@
                     //document.getElementById('labelImage').value = label.properties._data.image
                     document.getElementById('labelType').value = label.properties._data.type
                     document.getElementById('labelId').value = label.properties._data.id
+
                     const dropdownMenu = document.getElementById("dropdownMenu");
-                    var labelElement
-                    var deleteMediaButton
-                    var id
+                    let labelElement, deleteMediaButton, id, div;
+
                     label.properties._data.media.forEach(media => {
+                        div = document.createElement("li");
+                        div.setAttribute("style", "display: inline-block");
                         labelElement = document.createElement("label");
                         deleteMediaButton = document.createElement("label");
                         id = document.createElement("input");
@@ -108,9 +110,12 @@
                             '</svg>' +
                             '</button>';
                         labelElement.innerText = media.fileName;
-                        dropdownMenu.appendChild(labelElement);
-                        dropdownMenu.appendChild(deleteMediaButton)
-                        dropdownMenu.appendChild(id)
+
+                        div.appendChild(labelElement);
+                        div.appendChild(deleteMediaButton);
+                        div.appendChild(id);
+
+                        dropdownMenu.appendChild(div);
                     }
                 )
                     tinyMCE.activeEditor.execCommand("mceInsertContent", false, label.properties._data.balloonContentBody);
@@ -153,18 +158,22 @@
                 function changeSelect() {
                     switch (document.getElementById('labelType').value) {
                         case '3':
-                            document.getElementById('mediaContentPhotoBlock').style.display = '';
-                            document.getElementById('mediaContentVideoBlock').style.display = 'none';
+                            document.getElementById('addContentText').textContent = 'Добавить фото';
+                            document.getElementById('mediaContent').setAttribute('accept', "image/*");
+                            document.getElementById('mediaContentBlock').style.display = '';
                             document.getElementById('labelContentBlock').style.display = 'none';
+                            document.getElementById('dropdown').textContent = 'Добавленные фото';
                             break
                         case '4':
-                            document.getElementById('mediaContentVideoBlock').style.display = '';
-                            document.getElementById('mediaContentPhotoBlock').style.display = 'none';
+                            document.getElementById('addContentText').textContent = 'Добавить видео';
+                            document.getElementById('mediaContent').setAttribute('accept', "video/*");
+                            document.getElementById('mediaContentBlock').style.display = '';
                             document.getElementById('labelContentBlock').style.display = 'none';
+                            document.getElementById('dropdown').textContent = 'Добавленные видео';
+
                             break
                         default:
-                            document.getElementById('mediaContentPhotoBlock').style.display = 'none';
-                            document.getElementById('mediaContentVideoBlock').style.display = 'none';
+                            document.getElementById('mediaContentBlock').style.display = 'none';
                             document.getElementById('labelContentBlock').style.display = '';
                             break
 
@@ -199,7 +208,7 @@
 <!--                        <input class="form-control" type="text" accept="image" name="labelImage" id="labelImage">-->
 <!--                    </div>-->
                     <div>
-                        <label for="labelType" class="form-label">Выберите тип метки</label>
+                        <label style="margin-top: 10px"  for="labelType" class="form-label">Выберите тип метки</label>
                         <select class="form-select" aria-label="Выберите тип метки" name="labelType" id="labelType">
                             <option selected value="1">История</option>
                             <option value="2">Биография</option>
@@ -207,32 +216,27 @@
                             <option value="4">Видео</option>
                             <option value="5">Объект</option>
                         </select>
-                        <div id="mediaContentPhotoBlock">
-                            <label for="mediaContentPhoto" class="form-label">Добавить фото</label>
-                            <input class="form-control" type="file" accept="image/*" name="mediaContent" id="mediaContentPhoto">
-                        </div>
-                        <div id="mediaContentVideoBlock">
-                            <label for="mediaContentVideo" class="form-label">Добавить видео</label>
-                            <input class="form-control" type="file" accept="video/*" name="mediaContent" id="mediaContentVideo">
+                        <div style="margin-top: 5px" id="mediaContentBlock">
+                            <label id="addContentText" for="mediaContent" class="form-label"></label>
+                            <input class="form-control" type="file" name="mediaContent" id="mediaContent">
                         </div>
 
                     </div>
-                    <div id="labelContentBlock" class="mb-3">
+                        <div style="margin-top: 10px" id="labelContentBlock" class="mb-3">
                         <label for="labelContent" class="form-label">Описание метки</label>
                         <textarea class="form-control" name="labelContent" id="labelContent"></textarea>
                     </div>
                     <input type="hidden" name="coordinates" id="coordsInput">
                     <input type="hidden" name="street" id="streetInput">
                     <input type="hidden" name="id" id="labelId">
-                    <button type="submit" class="btn btn-outline-success">Сохранить</button>
+                    <button style="margin-top: 10px" type="submit" class="btn btn-outline-success">Сохранить</button>
                 </form>
 
-                <div style="margin-top: 5px" class="btn-group">
-                    <button type="button" id="dropdown" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Добавленные фото
-                    </button>
+                <div style="margin-top: 10px" class="btn-group">
+                    <button type="button" id="dropdown" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                     <form th:action="@{'/delete_media'}" method="post">
-                        <div class="dropdown-menu" id="dropdownMenu"  aria-labelledby="dropdown"></div>
+                        <div style="align-items: baseline"  class="dropdown-menu" id="dropdownMenu"  aria-labelledby="dropdown">
+                        </div>
                     </form>
                 </div>
 
