@@ -33,8 +33,8 @@ public class MediaService {
 
         try {
             file.transferTo(new File(uploadPath + "/" + file.getOriginalFilename()));
-        } catch (IOException e) {
-
+        } catch (IOException ignored) {
+            //TODO
         }
 
         return file.getOriginalFilename();
@@ -50,7 +50,7 @@ public class MediaService {
 
     public void deleteMedia(long id) {
         Media media = mediaRepository.getById(id);
-        if (new File(uploadPath + "/" +media.getFileName()).delete()) {
+        if (new File(uploadPath + "/" + media.getFileName()).delete()) {
             mediaRepository.deleteById(id);
         }
     }
