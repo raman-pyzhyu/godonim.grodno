@@ -67,6 +67,8 @@ public class MapController {
 
     @PostMapping("/delete_label")
     public String deleteLabel(@RequestParam long id) {
+        labelService.getLabel(id).orElseGet(Label::new).getMedia()
+                .forEach(media -> mediaService.deleteMedia(media.getId()));
         labelService.deleteLabel(id);
         return "redirect:/map";
     }
