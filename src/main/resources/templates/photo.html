@@ -69,10 +69,10 @@
                                     </div>
                                     <div  class="carousel-inner">
                                         <div th:if="${media.getId() == label.getMedia().iterator().next().getId()}" th:each="media : ${label.getMedia()}" class="carousel-item active">
-                                            <img th:src="${'/uploads/' + media.getFileName()}" class="d-block w-100">
+                                            <img th:src="${'uploads/' + media.getFileName()}" class="d-block w-100">
                                         </div>
                                         <div th:if="${media.getId() != label.getMedia().iterator().next().getId()}" th:each="media : ${label.getMedia()}" class="carousel-item">
-                                            <img th:src="${'/uploads/' + media.getFileName()}" class="d-block w-100">
+                                            <img th:src="${'uploads/' + media.getFileName()}" class="d-block w-100">
                                         </div>
                                     </div>
                                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
