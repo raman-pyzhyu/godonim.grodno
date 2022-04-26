@@ -5,14 +5,14 @@
         <title>Godonim</title>
 
         <link th:href="@{../css/style.css}" rel='stylesheet' >
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
         <script src="https://api-maps.yandex.ru/2.1/?apikey=5987b379-55f3-49cb-8350-7f90f11c3bdf&lang=ru_RU" type="text/javascript">
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         <script src="https://cdn.tiny.cloud/1/2ozo2g0dz9m28sagt804i471s2qmsjrwwyt1c1cp61vw8nhu/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" th:inline="javascript">
             /*<![CDATA[*/
             var myMap
@@ -41,6 +41,7 @@
                         street: value.street,
                         type: value.type,
                         image: value.image,
+                        media: value.media,
                         balloonContentHeader: value.name,
                         balloonContentBody: value.description
                     }, {
@@ -78,6 +79,7 @@
                     if ([[${isAuthenticated}]] == false) {
                         return;
                     }
+                    document.getElementById('labelForm').reset();
                     let label = e.get('target');
                     coords = label.properties._data.coords.split(',')
                     document.getElementById('coordsInput').value = coords
@@ -86,7 +88,29 @@
                     //document.getElementById('labelImage').value = label.properties._data.image
                     document.getElementById('labelType').value = label.properties._data.type
                     document.getElementById('labelId').value = label.properties._data.id
-                   // document.getElementById('labelContent').value = label.properties._data.balloonContent
+                    const dropdownMenu = document.getElementById("dropdownMenu");
+                    var labelElement
+                    var deleteMediaButton
+                    var id
+                    label.properties._data.media.forEach(media => {
+                        labelElement = document.createElement("label");
+                        deleteMediaButton = document.createElement("label");
+                        id = document.createElement("input");
+                        id.setAttribute("type", "hidden")
+                        id.setAttribute("name", "id")
+                        id.value = media.id
+                        deleteMediaButton.innerHTML = '<button style="margin: 2px"  type="submit" class="btn btn-outline-secondary">' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">' +
+                            '<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>' +
+                            '<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>' +
+                            '</svg>' +
+                            '</button>';
+                        labelElement.innerText = media.fileName;
+                        dropdownMenu.appendChild(labelElement);
+                        dropdownMenu.appendChild(deleteMediaButton)
+                        dropdownMenu.appendChild(id)
+                    }
+                )
                     tinyMCE.activeEditor.execCommand("mceInsertContent", false, label.properties._data.balloonContentBody);
 
                     myMap.balloon.open(coords, {
@@ -137,27 +161,29 @@
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <form id="labelForm" th:action="@{'/add_label'}" method="post">
+                <form id="labelForm" th:action="@{'/add_label'}" enctype="multipart/form-data" method="post">
                     <div>
                         <label for="labelName" class="form-label">Название метки</label>
                         <input class="form-control" type="text" placeholder="Название метки" aria-label="Название метки" name="labelName" id="labelName">
                     </div>
-                    <div>
-                        <label for="labelImage" class="form-label">Изображение метки(опционально)</label>
-                        <input class="form-control" type="file" accept="image/jpeg" name="labelImage" id="labelImage">
-                    </div>
+<!--                    <div>-->
+<!--                        <label for="labelImage" class="form-label">Изображение метки(опционально)</label>-->
+<!--                        <input class="form-control" type="text" accept="image" name="labelImage" id="labelImage">-->
+<!--                    </div>-->
                     <div>
                         <label for="labelType" class="form-label">Выберите тип метки</label>
                         <select class="form-select" aria-label="Выберите тип метки" name="labelType" id="labelType">
                             <option selected value="1">История</option>
                             <option value="2">Биография</option>
                             <option value="3">Фото</option>
-                            <option value="3">Видео</option>
+                            <option value="4">Видео</option>
+                            <option value="4">Объект</option>
                         </select>
                         <div>
-                            <label for="mediaContent" class="form-label">Добавить фото</label>
-                            <input class="form-control" type="file" accept="image/jpeg" name="mediaContent" id="mediaContent">
+                            <label for="mediaContentPhoto" class="form-label">Добавить фото</label>
+                            <input class="form-control" type="file" accept="image" name="mediaContent" id="mediaContentPhoto">
                         </div>
+
                     </div>
                     <div class="mb-3">
                         <label for="labelContent" class="form-label">Описание метки</label>
@@ -168,6 +194,16 @@
                     <input type="hidden" name="id" id="labelId">
                     <button type="submit" class="btn btn-outline-success">Сохранить</button>
                 </form>
+
+                <div class="btn-group">
+                    <button type="button" id="dropdown" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Добавленные фото
+                    </button>
+                    <form th:action="@{'/delete_media'}" method="post">
+                        <div class="dropdown-menu" id="dropdownMenu"  aria-labelledby="dropdown"></div>
+                    </form>
+                </div>
+
             </div>
         </div>
 
@@ -211,6 +247,7 @@
 
         <script>
             tinymce.init({
+                height : "300",
                 selector: 'textarea',
                 menubar: false,
                 plugins: 'lists',

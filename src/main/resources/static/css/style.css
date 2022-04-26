@@ -1,5 +1,7 @@
-
-
+body, html {
+    width: 100%;
+    height: 100%;
+}
 
 #map {
     width: 100%;
@@ -7,4 +9,17 @@
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.hide-box .hide-content {
+    display: none;
+}
+.hide-box input:checked ~ .hide-content {
+    display: block;
+}
+.hide-box input {
+    display: none;
+}
+.hide-box h6 {
+    cursor: pointer;
 }

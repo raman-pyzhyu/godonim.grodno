@@ -2,8 +2,8 @@ package com.grsu.map.controller;
 
 import com.grsu.map.domain.Label;
 import com.grsu.map.service.LabelService;
-import org.springframework.security.core.Authentication;
 import com.grsu.map.service.MediaService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +32,8 @@ public class MapController {
     @GetMapping("/map")
     public String getMap(Model model, Authentication authentication) {
         List<Label> labels = labelService.getLabels();
-        model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
+        //model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
+        model.addAttribute("isAuthenticated", true);
         model.addAttribute("labels", labels);
         return "map";
     }
@@ -43,23 +44,24 @@ public class MapController {
             @RequestParam String labelName,
             @RequestParam String street,
             @RequestParam String labelContent,
-            @RequestParam String labelImage,
+            // @RequestParam(required = false) MultipartFile labelImage,
             @RequestParam String labelType,
             @RequestParam String coordinates,
-            @RequestParam(required = false) String mediaType,
             @RequestParam(required = false) MultipartFile mediaContent
     ) {
         Label label = labelService.getLabel(id).orElseGet(Label::new);
         label.setName(labelName);
-        label.setImage(labelImage);
+        //label.setImage(labelImage);
         label.setDescription(labelContent);
         label.setType(labelType);
         label.setCoordinates(coordinates);
         label.setStreet(street);
 
-     //   mediaService.addMedia(mediaContent, mediaType, label);
-
-        labelService.addLabel(label);
+        if (!mediaContent.isEmpty()) {
+            mediaService.addMedia(mediaContent, labelType, label);
+        } else {
+            labelService.addLabel(label);
+        }
         return "redirect:/map";
     }
 
@@ -69,31 +71,16 @@ public class MapController {
         return "redirect:/map";
     }
 
+    @PostMapping("/delete_media")
+    public String deleteMedia(@RequestParam long id) {
+        mediaService.deleteMedia(id);
+        return "redirect:/map";
+    }
+
     @PostMapping("/search")
     public String search(@RequestParam String search, @RequestParam String searchType, Model model) {
         List<Label> result = labelService.searchLabel(search, searchType);
         model.addAttribute("labels", result);
         return "map";
-    }
-
-    @GetMapping("/biography")
-    public String getBiographies(Model model) {
-        List<Label> labels = labelService.getLabels();
-        model.addAttribute("labels", labels);
-        return "biography";
-    }
-
-    @GetMapping("/photo")
-    public String getPhotos(Model model) {
-        List<Label> labels = labelService.getLabels();
-        model.addAttribute("labels", labels);
-        return "photo";
-    }
-
-    @GetMapping("/video")
-    public String getVideos(Model model) {
-        List<Label> labels = labelService.getLabels();
-        model.addAttribute("labels", labels);
-        return "video";
     }
 }

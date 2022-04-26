@@ -1,10 +1,13 @@
 package com.grsu.map.domain;
 
 import com.sun.istack.NotNull;
-import lombok.Data;
+import lombok.*;
+import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 
 import javax.persistence.*;
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "media")
 public class Media {
@@ -17,10 +20,6 @@ public class Media {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "media")
-    private String media;
-
-    @ManyToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "label_id")
-    private Label label;
+    @Column(name = "file_name")
+    private String fileName;
 }

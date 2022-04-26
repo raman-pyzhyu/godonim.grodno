@@ -31,18 +31,9 @@
                     <a class="nav-link active" th:href="@{/video}">Видео</a>
                 </li>
             </ul>
-            <form th:action="@{'/search'}" method="post">
-                <div style=" margin-left: 400px; display: inline-flex;">
+            <form th:action="@{'/searchVideo'}" method="post">
+                <div style="display: inline-flex; position: absolute; top: 50%; transform: translate(0, -50%); right: 10px">
                     <input class="form-control" placeholder="Поиск" type="search" id="site-search" name="search">
-                    <div>
-                        <select class="form-select" aria-label="Выберите тип метки" name="searchType">
-                            <option value="">Тип метки</option>
-                            <option value="1">История</option>
-                            <option value="2">Биография</option>
-                            <option value="3">Фото</option>
-                            <option value="4">Видео</option>
-                        </select>
-                    </div>
                     <button class="btn btn-secondary">Search</button>
                 </div>
             </form>

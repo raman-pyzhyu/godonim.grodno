@@ -33,15 +33,7 @@ public class LabelService {
     }
 
     public void deleteLabel(long id) {
-        try {
-            labelRepository.deleteById(id);
-        } catch (Exception e) {
-            mediaRepository.findAll().forEach(media -> {
-                if (media.getLabel().equals(labelRepository.findById(id).orElseGet(Label::new))) {
-                    mediaRepository.deleteById(media.getId());
-                }
-            });
-        }
+        labelRepository.deleteById(id);
     }
 
     public List<Label> searchLabel(String search, String searchType) {

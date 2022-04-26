@@ -2,6 +2,7 @@ package com.grsu.map.service;
 
 import com.grsu.map.domain.Label;
 import com.grsu.map.domain.Media;
+import com.grsu.map.repository.LabelRepository;
 import com.grsu.map.repository.MediaRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,11 @@ public class MediaService {
     @Value("${upload.path}")
     private String uploadPath;
     private final MediaRepository mediaRepository;
+    private final LabelRepository labelRepository;
 
-    public MediaService(MediaRepository mediaRepository) {
+    public MediaService(MediaRepository mediaRepository, LabelRepository labelRepository) {
         this.mediaRepository = mediaRepository;
+        this.labelRepository = labelRepository;
     }
 
     private String uploadMedia(MultipartFile file) {
@@ -27,23 +30,28 @@ public class MediaService {
         if (!uploadFolder.exists()) {
             uploadFolder.mkdir();
         }
-        String uuidFile = UUID.randomUUID().toString();
-        String resultFilename = uuidFile + "." + file.getOriginalFilename();
 
         try {
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
+            file.transferTo(new File(uploadPath + "/" + file.getOriginalFilename()));
         } catch (IOException e) {
 
         }
 
-        return resultFilename;
+        return file.getOriginalFilename();
     }
 
     public void addMedia(MultipartFile file, String type, Label label) {
         Media media = new Media();
-        media.setMedia(uploadMedia(file));
+        media.setFileName(uploadMedia(file));
         media.setType(type);
-        media.setLabel(label);
-        mediaRepository.save(media);
+        label.getMedia().add(media);
+        labelRepository.save(label);
+    }
+
+    public void deleteMedia(long id) {
+        Media media = mediaRepository.getById(id);
+        if (new File(uploadPath + "/" +media.getFileName()).delete()) {
+            mediaRepository.deleteById(id);
+        }
     }
 }

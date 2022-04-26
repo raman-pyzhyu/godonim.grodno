@@ -1,12 +1,15 @@
 package com.grsu.map.domain;
 
 import com.sun.istack.NotNull;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "labels")
 public class Label {
@@ -34,6 +37,7 @@ public class Label {
     @Column(name = "coordinates")
     private String coordinates;
 
-    @OneToMany
-    private Set<Media> media;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "label_id")
+    private Set<Media> media = new HashSet<>();
 }

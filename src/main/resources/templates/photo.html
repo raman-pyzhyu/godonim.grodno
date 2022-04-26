@@ -36,18 +36,9 @@
                     <a class="nav-link active" th:href="@{/video}">Видео</a>
                 </li>
             </ul>
-            <form th:action="@{'/search'}" method="post">
-                <div style=" margin-left: 400px; display: inline-flex;">
+            <form th:action="@{'/searchPhoto'}" method="post">
+                <div style="display: inline-flex; position: absolute; top: 50%; transform: translate(0, -50%); right: 10px">
                     <input class="form-control" placeholder="Поиск" type="search" id="site-search" name="search">
-                    <div>
-                        <select class="form-select" aria-label="Выберите тип метки" name="searchType">
-                            <option value="">Тип метки</option>
-                            <option value="1">История</option>
-                            <option value="2">Биография</option>
-                            <option value="3">Фото</option>
-                            <option value="4">Видео</option>
-                        </select>
-                    </div>
                     <button class="btn btn-secondary">Search</button>
                 </div>
             </form>
@@ -71,12 +62,32 @@
                         <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse"
                              th:aria-labelledby="headingOne + ${label.getId()}" data-bs-parent="#accordion">
                             <div class="accordion-body">
-                                <li style="text-align: center; list-style-type: none;" class="">
-                                    <a class="text-secondary nav-link nav-link-add">Ссылка на фото</a>
-                                </li>
+                                <div th:if="${label.getMedia().size() != 0}" id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-indicators">
+                                        <button th:if="${media.getId() == label.getMedia().iterator().next().getId()}" th:each="media, iterStat  : ${label.getMedia()}" type="button" data-bs-target="#carouselExampleIndicators" th:data-bs-slide-to="${iterStat.index}" class="active" aria-current="true"></button>
+                                        <button th:if="${media.getId() != label.getMedia().iterator().next().getId()}" th:each="media, iterStat : ${label.getMedia()}" type="button" data-bs-target="#carouselExampleIndicators" th:data-bs-slide-to="${iterStat.index}" aria-current="true"></button>
+                                    </div>
+                                    <div  class="carousel-inner">
+                                        <div th:if="${media.getId() == label.getMedia().iterator().next().getId()}" th:each="media : ${label.getMedia()}" class="carousel-item active">
+                                            <img th:src="${'/uploads/' + media.getFileName()}" class="d-block w-100">
+                                        </div>
+                                        <div th:if="${media.getId() != label.getMedia().iterator().next().getId()}" th:each="media : ${label.getMedia()}" class="carousel-item">
+                                            <img th:src="${'/uploads/' + media.getFileName()}" class="d-block w-100">
+                                        </div>
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </h5>
+
                 </div>
             </div>
         </div>
