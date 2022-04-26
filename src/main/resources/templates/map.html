@@ -34,6 +34,14 @@
                 let labels = [[${labels}]];
 
                 labels.forEach(function (value) {
+                    var image;
+
+                    if (value.image !== "") {
+                        image = 'uploads/' + value.image
+                    } else {
+                        image = 'uploads/icon.png'
+                    }
+
                     myMap.geoObjects.add(new ymaps.Placemark(value.coordinates.split(','), {
                         id: value.id,
                         coords: value.coordinates,
@@ -45,6 +53,10 @@
                         balloonContentHeader: value.name,
                         balloonContentBody: value.description
                     }, {
+                        iconLayout: 'default#image',
+                        iconImageHref: image,
+                        iconImageSize: [30, 30],
+                        iconImageOffset: [-15, -30],
                         preset: value.category
                     }));
                 })
@@ -87,7 +99,7 @@
                     document.getElementById('coordsInput').value = coords
                     document.getElementById('streetInput').value = label.properties._data.street
                     document.getElementById('labelName').value = label.properties._data.name
-                    //document.getElementById('labelImage').value = label.properties._data.image
+                    document.getElementById('labelImage').value = label.properties._data.image
                     document.getElementById('labelType').value = label.properties._data.type
                     document.getElementById('labelId').value = label.properties._data.id
 
@@ -199,14 +211,14 @@
             </div>
             <div class="offcanvas-body">
                 <form id="labelForm" th:action="@{'/add_label'}" enctype="multipart/form-data" method="post">
-                    <div>
+                    <div style="margin-top: 10px">
                         <label for="labelName" class="form-label">Название метки</label>
                         <input class="form-control" type="text" placeholder="Название метки" aria-label="Название метки" name="labelName" id="labelName">
                     </div>
-<!--                    <div>-->
-<!--                        <label for="labelImage" class="form-label">Изображение метки(опционально)</label>-->
-<!--                        <input class="form-control" type="text" accept="image" name="labelImage" id="labelImage">-->
-<!--                    </div>-->
+                    <div style="margin-top: 10px">
+                        <label for="labelImage" class="form-label">Изображение метки</label>
+                        <input class="form-control" type="file" accept="image/*" name="labelImage" id="labelImage">
+                    </div>
                     <div>
                         <label style="margin-top: 10px"  for="labelType" class="form-label">Выберите тип метки</label>
                         <select class="form-select" aria-label="Выберите тип метки" name="labelType" id="labelType">

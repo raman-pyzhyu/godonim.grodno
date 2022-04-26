@@ -25,7 +25,7 @@ public class MediaService {
         this.labelRepository = labelRepository;
     }
 
-    private String uploadMedia(MultipartFile file) {
+    public String uploadMedia(MultipartFile file) {
         File uploadFolder = new File(uploadPath);
         if (!uploadFolder.exists()) {
             uploadFolder.mkdir();

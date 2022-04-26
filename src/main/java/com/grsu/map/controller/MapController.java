@@ -44,14 +44,14 @@ public class MapController {
             @RequestParam String labelName,
             @RequestParam String street,
             @RequestParam String labelContent,
-            // @RequestParam(required = false) MultipartFile labelImage,
+            @RequestParam(required = false) MultipartFile labelImage,
             @RequestParam String labelType,
             @RequestParam String coordinates,
             @RequestParam(required = false) MultipartFile mediaContent
     ) {
         Label label = labelService.getLabel(id).orElseGet(Label::new);
         label.setName(labelName);
-        //label.setImage(labelImage);
+        label.setImage(mediaService.uploadMedia(labelImage));
         label.setDescription(labelContent);
         label.setType(labelType);
         label.setCoordinates(coordinates);
