@@ -54,9 +54,7 @@
                         </button>
                         <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse" th:aria-labelledby="headingOne + ${label.getId()}" data-bs-parent="#accordion">
                             <div class="accordion-body">
-                                <li style="text-align: center; list-style-type: none;" class="" >
-                                    <a  class="text-secondary nav-link nav-link-add">Ссылка на пдф</a>
-                                </li>
+                                <div th:utext="${label.getDescription()}"></div>
                             </div>
                         </div>
                     </h5>
