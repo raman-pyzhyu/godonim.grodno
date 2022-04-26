@@ -25,7 +25,7 @@ public class Label {
     @Column(name = "street")
     private String street;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 4096)
     private String description;
 
     @Column(name = "type")
