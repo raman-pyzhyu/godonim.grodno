@@ -4,6 +4,7 @@ import com.grsu.map.domain.Label;
 import com.grsu.map.domain.Media;
 import com.grsu.map.repository.LabelRepository;
 import com.grsu.map.repository.MediaRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
+@Slf4j
 public class MediaService {
 
     @Value("${upload.path}")
@@ -36,8 +38,8 @@ public class MediaService {
         if (!uploadFile.exists()) {
             try {
                 file.transferTo(uploadFile);
-            } catch (IOException ignored) {
-                //TODO
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
             }
 
             return file.getOriginalFilename();
