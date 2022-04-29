@@ -13,6 +13,7 @@ public interface LabelRepository extends JpaRepository<Label, Long> {
             "(:searchType = '' or :searchType = l.type)" +
             "and (:search = '' or " +
             "(lower(l.name) like lower(concat('%', concat(:search, '%')))) " +
-            "or (lower(l.description) like lower(concat('%', concat(:search, '%')))))")
+            "or (lower(l.description) like lower(concat('%', concat(:search, '%'))))" +
+            "or (lower(l.street) like lower(concat('%', concat(:search, '%')))))")
     List<Label> getLabels(@Param("search") String search, @Param("searchType") String searchType);
 }

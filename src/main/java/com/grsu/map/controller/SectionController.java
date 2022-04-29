@@ -33,7 +33,7 @@ public class SectionController {
 
     @GetMapping("/photo")
     public String getPhotos(Model model) {
-        Map<String, List<Label>> labelsByStreet = labelService.getLabelsByStreet();
+        Map<String, List<Label>> labelsByStreet = labelService.getLabelsByStreet(labelService.getLabels());
         model.addAttribute("labelsByStreet", labelsByStreet);
         return "photo";
     }
@@ -55,8 +55,9 @@ public class SectionController {
 
     @PostMapping("/searchPhoto")
     public String searchPhoto(@RequestParam String search, Model model) {
-        List<Label> result = labelService.searchLabel(search, "3");
-        model.addAttribute("labels", result);
+        Map<String, List<Label>> result = labelService
+                .getLabelsByStreet(labelService.searchLabel(search, "3"));
+        model.addAttribute("labelsByStreet", result);
         return "photo";
     }
 

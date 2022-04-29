@@ -42,7 +42,7 @@ public class LabelService {
         return labelRepository.getLabels(search, searchType);
     }
 
-    public Map<String, List<Label>> getLabelsByStreet() {
-        return labelRepository.findAll().stream().collect(Collectors.groupingBy((Label::getStreet)));
+    public Map<String, List<Label>> getLabelsByStreet(List<Label> labels) {
+        return labels.stream().collect(Collectors.groupingBy((Label::getStreet)));
     }
 }
