@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class SectionController {
@@ -32,8 +33,8 @@ public class SectionController {
 
     @GetMapping("/photo")
     public String getPhotos(Model model) {
-        List<Label> labels = labelService.searchLabel("", "3");
-        model.addAttribute("labels", labels);
+        Map<String, List<Label>> labelsByStreet = labelService.getLabelsByStreet();
+        model.addAttribute("labelsByStreet", labelsByStreet);
         return "photo";
     }
 
