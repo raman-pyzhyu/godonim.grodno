@@ -31,18 +31,13 @@
                     yandexMapDisablePoiInteractivity: true
                 });
 
+                clusterer = new ymaps.Clusterer({});
+
+
                 let labels = [[${labels}]];
 
                 labels.forEach(function (value) {
-                    var image;
-
-                    if (value.image !== "") {
-                        image = 'uploads/' + value.image
-                    } else {
-                        image = 'uploads/icon.png'
-                    }
-
-                    myMap.geoObjects.add(new ymaps.Placemark(value.coordinates.split(','), {
+                    clusterer.add(new ymaps.Placemark(value.coordinates.split(','), {
                         id: value.id,
                         coords: value.coordinates,
                         name: value.name,
@@ -54,12 +49,14 @@
                         balloonContentBody: value.description
                     }, {
                         iconLayout: 'default#image',
-                        iconImageHref: image,
+                        iconImageHref: 'uploads/' + value.image,
                         iconImageSize: [30, 30],
                         iconImageOffset: [-15, -30],
                         preset: value.category
                     }));
                 })
+
+                myMap.geoObjects.add(clusterer);
 
                 myMap.events.add('click', function (e) {
                     if ([[${isAuthenticated}]] == false) {
@@ -76,6 +73,7 @@
                             document.getElementById('streetInput').value = res.geoObjects.get(0).getThoroughfare();
                         }
                     );
+
                     myMap.balloon.open(coords, {
                         contentBody:'<button type="button" class="btn btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">' +
                             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">' +
@@ -99,7 +97,6 @@
                     document.getElementById('coordsInput').value = coords
                     document.getElementById('streetInput').value = label.properties._data.street
                     document.getElementById('labelName').value = label.properties._data.name
-                    document.getElementById('labelImage').value = label.properties._data.image
                     document.getElementById('labelType').value = label.properties._data.type
                     document.getElementById('labelId').value = label.properties._data.id
 
@@ -185,8 +182,11 @@
 
                             break
                         default:
-                            document.getElementById('mediaContentBlock').style.display = 'none';
+                            document.getElementById('addContentText').textContent = 'Добавить документ';
+                            document.getElementById('mediaContentBlock').style.display = '';
+                            document.getElementById('mediaContent').setAttribute('accept', "application/pdf");
                             document.getElementById('labelContentBlock').style.display = '';
+                            document.getElementById('dropdown').textContent = 'Добавленные документы';
                             break
 
                     }
@@ -230,7 +230,7 @@
                         </select>
                         <div style="margin-top: 5px" id="mediaContentBlock">
                             <label id="addContentText" for="mediaContent" class="form-label"></label>
-                            <input class="form-control" type="file" name="mediaContent" id="mediaContent">
+                            <input class="form-control" type="file" multiple name="mediaContent" id="mediaContent">
                         </div>
 
                     </div>
