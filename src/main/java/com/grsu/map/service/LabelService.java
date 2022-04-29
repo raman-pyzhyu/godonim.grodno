@@ -6,7 +6,9 @@ import com.grsu.map.repository.MediaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LabelService {
@@ -38,5 +40,9 @@ public class LabelService {
 
     public List<Label> searchLabel(String search, String searchType) {
         return labelRepository.getLabels(search, searchType);
+    }
+
+    public Map<String, List<Label>> getLabelsByStreet() {
+        return labelRepository.findAll().stream().collect(Collectors.groupingBy((Label::getStreet)));
     }
 }
