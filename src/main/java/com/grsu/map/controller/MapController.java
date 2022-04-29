@@ -18,6 +18,12 @@ public class MapController {
 
     private final LabelService labelService;
     private final MediaService mediaService;
+    private final static String HISTORY_ICON = "historyIcon.png";
+    private final static String BIOGRAPHY_ICON = "biographyIcon.png";
+    private final static String PHOTO_ICON = "photoIcon.png";
+    private final static String VIDEO_ICON = "videoIcon.png";
+    private final static String OBJECT_ICON = "objectIcon.png";
+
 
     public MapController(LabelService labelService, MediaService mediaService) {
         this.labelService = labelService;
@@ -47,21 +53,44 @@ public class MapController {
             @RequestParam(required = false) MultipartFile labelImage,
             @RequestParam String labelType,
             @RequestParam String coordinates,
-            @RequestParam(required = false) MultipartFile mediaContent
+            @RequestParam(required = false) List<MultipartFile> mediaContent
     ) {
         Label label = labelService.getLabel(id).orElseGet(Label::new);
+
+        if (labelImage.isEmpty()) {
+            switch (labelType) {
+                case "1":
+                    label.setImage(HISTORY_ICON);
+                    break;
+                case "2":
+                    label.setImage(BIOGRAPHY_ICON);
+                    break;
+                case "3":
+                    label.setImage(PHOTO_ICON);
+                    break;
+                case "4":
+                    label.setImage(VIDEO_ICON);
+                    break;
+                case "5":
+                    label.setImage(OBJECT_ICON);
+                    break;
+            }
+        } else {
+            label.setImage(mediaService.uploadMedia(labelImage));
+        }
+
         label.setName(labelName);
-        label.setImage(mediaService.uploadMedia(labelImage));
         label.setDescription(labelContent);
         label.setType(labelType);
         label.setCoordinates(coordinates);
         label.setStreet(street);
 
         if (!mediaContent.isEmpty()) {
-            mediaService.addMedia(mediaContent, labelType, label);
-        } else {
-            labelService.addLabel(label);
+            mediaContent.forEach(file -> mediaService.addMedia(file, labelType, label));
         }
+
+        labelService.addLabel(label);
+
         return "redirect:/map";
     }
 
