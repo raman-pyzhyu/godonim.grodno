@@ -55,6 +55,7 @@
                         <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse" th:aria-labelledby="headingOne + ${label.getId()}" data-bs-parent="#accordion">
                             <div class="accordion-body">
                                 <div th:utext="${label.getDescription()}"></div>
+                                <a th:each="media: ${label.getMedia()}" target="_blank" th:text="${media.getFileName()}" th:href="${'uploads/' + media.getFileName()}"></a>
                             </div>
                         </div>
                     </h5>
