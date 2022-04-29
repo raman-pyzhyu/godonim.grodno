@@ -26,29 +26,33 @@ public class SectionController {
 
     @GetMapping("/biography")
     public String getBiographies(Model model) {
-        List<Label> labels = labelService.searchLabel("", "2");
-        model.addAttribute("labels", labels);
+        Map<String, List<Label>> labelsByStreet = labelService
+                .getLabelsByStreet(labelService.searchLabels("", "2"));
+        model.addAttribute("labelsByStreet", labelsByStreet);
         return "biography";
     }
 
     @GetMapping("/photo")
     public String getPhotos(Model model) {
-        Map<String, List<Label>> labelsByStreet = labelService.getLabelsByStreet(labelService.getLabels());
+        Map<String, List<Label>> labelsByStreet = labelService
+                .getLabelsByStreet(labelService.searchLabels("", "3"));
         model.addAttribute("labelsByStreet", labelsByStreet);
         return "photo";
     }
 
     @GetMapping("/video")
     public String getVideos(Model model) {
-        List<Label> labels = labelService.searchLabel("", "4");
-        model.addAttribute("labels", labels);
+        Map<String, List<Label>> labelsByStreet = labelService
+                .getLabelsByStreet(labelService.searchLabels("", "4"));
+        model.addAttribute("labelsByStreet", labelsByStreet);
         return "video";
     }
 
     @PostMapping("/searchBiography")
     public String searchBiography(@RequestParam String search, Model model) {
-        List<Label> result = labelService.searchLabel(search, "2");
-        model.addAttribute("labels", result);
+        Map<String, List<Label>> result = labelService
+                .getLabelsByStreet(labelService.searchLabels(search, "2"));
+        model.addAttribute("labelsByStreet", result);
         model.addAttribute("search", search);
         return "biography";
     }
@@ -56,15 +60,18 @@ public class SectionController {
     @PostMapping("/searchPhoto")
     public String searchPhoto(@RequestParam String search, Model model) {
         Map<String, List<Label>> result = labelService
-                .getLabelsByStreet(labelService.searchLabel(search, "3"));
+                .getLabelsByStreet(labelService.searchLabels(search, "3"));
         model.addAttribute("labelsByStreet", result);
+        model.addAttribute("search", search);
         return "photo";
     }
 
     @PostMapping("/searchVideo")
     public String searchVideo(@RequestParam String search, Model model) {
-        List<Label> result = labelService.searchLabel(search, "4");
-        model.addAttribute("labels", result);
+        Map<String, List<Label>> result = labelService
+                .getLabelsByStreet(labelService.searchLabels(search, "4"));
+        model.addAttribute("labelsByStreet", result);
+        model.addAttribute("search", search);
         return "video";
     }
 }

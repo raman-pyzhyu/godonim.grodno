@@ -38,7 +38,7 @@ public class LabelService {
         labelRepository.deleteById(id);
     }
 
-    public List<Label> searchLabel(String search, String searchType) {
+    public List<Label> searchLabels(String search, String searchType) {
         return labelRepository.getLabels(search, searchType);
     }
 

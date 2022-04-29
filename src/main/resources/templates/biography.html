@@ -47,20 +47,40 @@
         <div class="col">
         </div>
         <div class="col-7">
-            <div class="accordion" id="accordion">
-                <div style="margin-bottom: 2%"  th:each="label:${labels}" class="accordion-item">
-                    <h5  class="accordion-header" th:id="headingOne + ${label.getId()}">
-                        <button style="width: 100%; display: inline-block;" th:text="${label.getStreet()}" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${label.getId()}" aria-expanded="true" th:aria-controls="collapse + ${label.getId()}">
-                        </button>
-                        <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse" th:aria-labelledby="headingOne + ${label.getId()}" data-bs-parent="#accordion">
-                            <div class="accordion-body">
-                                <div th:utext="${label.getDescription()}"></div>
-                                <a th:each="media: ${label.getMedia()}" target="_blank" th:text="${media.getFileName()}" th:href="${'uploads/' + media.getFileName()}"></a>
+        <div class="accordion" id="accordionOutside">
+            <div style="margin-bottom: 2%" th:each="street, stats: ${labelsByStreet}" class="accordion-item">
+                <h5 class="accordion-header" th:id="heading + ${stats.index}">
+                    <button style="width: 100%; display: inline-block;" th:text="${street.key}"
+                            class="btn btn-outline-secondary dropdown-toggle" type="button"
+                            data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${stats.index}"
+                            aria-expanded="true" th:aria-controls="collapse + ${stats.index}">
+                    </button>
+                    <div th:id="collapse + ${stats.index}" class="accordion-collapse collapse"
+                         th:aria-labelledby="heading + ${stats.index}" data-bs-parent="#accordionOutside">
+                        <div class="accordion-body">
+                            <div class="accordion" id="accordionInside">
+                                <div style="margin-bottom: 2%" th:each="label:${street.value}" class="accordion-item">
+                                    <h5 class="accordion-header" th:id="heading + ${label.getId()}">
+                                        <button style="width: 100%; display: inline-block;" th:text="${label.getName()}"
+                                                class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                                data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${label.getId()}"
+                                                aria-expanded="true" th:aria-controls="collapse + ${label.getId()}">
+                                        </button>
+                                        <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse"
+                                             th:aria-labelledby="heading + ${label.getId()}" data-bs-parent="#accordionInside">
+                                            <div class="accordion-body">
+                                                <div th:utext="${label.getDescription()}"></div>
+                                                <a th:each="media: ${label.getMedia()}" target="_blank" th:text="${media.getFileName()}" th:href="${'uploads/' + media.getFileName()}"></a>
+                                            </div>
+                                        </div>
+                                    </h5>
+                                </div>
                             </div>
                         </div>
-                    </h5>
-                </div>
+                    </div>
+                </h5>
             </div>
+        </div>
         </div>
         <div class="col">
         </div>

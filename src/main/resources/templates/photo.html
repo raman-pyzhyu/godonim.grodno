@@ -47,6 +47,7 @@
 </nav>
 <div class="container page-container">
     <h1 style="text-align: center">Фото</h1>
+    <h2 style="text-align: center" th:if="${search != null and search != ''}" th:text="'Результаты поиска по запросу: ' + ${search}"></h2>
     <div class="row justify-content-md-center">
         <div class="col">
         </div>

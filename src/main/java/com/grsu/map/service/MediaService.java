@@ -62,6 +62,7 @@ public class MediaService {
 
     public void deleteMedia(long id) {
         Media media = mediaRepository.getById(id);
+
         if (new File(uploadPath + "/" + media.getFileName()).delete()) {
             mediaRepository.deleteById(id);
         }

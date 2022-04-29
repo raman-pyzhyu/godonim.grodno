@@ -42,41 +42,62 @@
 </nav>
 <div class="container page-container">
     <h1 style="text-align: center">Видео</h1>
+    <h2 style="text-align: center" th:if="${search != null and search != '' and labelsByStreet.size() != 0}" th:text="'Результаты поиска по запросу: ' + ${search}"></h2>
+    <h2 style="text-align: center" th:if="${search != null and search != '' and labelsByStreet.size() == 0}" th:text="'Нет результатов по запросу: ' + ${search}"></h2>
     <div class="row justify-content-md-center">
         <div class="col">
         </div>
         <div class="col-7">
-            <div class="accordion" id="accordion">
-                <div style="margin-bottom: 2%"  th:each="label:${labels}" class="accordion-item">
-                    <h5  class="accordion-header" th:id="headingOne + ${label.getId()}">
-                        <button style="width: 100%; display: inline-block;" th:text="${label.getStreet()}" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${label.getId()}" aria-expanded="true" th:aria-controls="collapse + ${label.getId()}">
+            <div class="accordion" id="accordionOutside">
+                <div style="margin-bottom: 2%" th:each="street, stats: ${labelsByStreet}" class="accordion-item">
+                    <h5 class="accordion-header" th:id="heading + ${stats.index}">
+                        <button style="width: 100%; display: inline-block;" th:text="${street.key}"
+                                class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${stats.index}"
+                                aria-expanded="true" th:aria-controls="collapse + ${stats.index}">
                         </button>
-                        <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse" th:aria-labelledby="headingOne + ${label.getId()}" data-bs-parent="#accordion">
-
+                        <div th:id="collapse + ${stats.index}" class="accordion-collapse collapse"
+                             th:aria-labelledby="heading + ${stats.index}" data-bs-parent="#accordionOutside">
                             <div class="accordion-body">
+                                <div class="accordion" id="accordionInside">
+                                    <div style="margin-bottom: 2%" th:each="label:${street.value}" class="accordion-item">
+                                        <h5 class="accordion-header" th:id="heading + ${label.getId()}">
+                                            <button style="width: 100%; display: inline-block;" th:text="${label.getName()}"
+                                                    class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                                    data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${label.getId()}"
+                                                    aria-expanded="true" th:aria-controls="collapse + ${label.getId()}">
+                                            </button>
+                                            <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse"
+                                                 th:aria-labelledby="heading + ${label.getId()}" data-bs-parent="#accordionInside">
+                                                <div class="accordion-body">
 
-                                <div th:each="media: ${label.getMedia()}">
-                                    <!-- Кнопка-триггер модального окна -->
-                                    <button style="margin-top: 10px" th:text="${media.getFileName()}" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" th:data-bs-target="${'#modal' + media.getId()}"></button>
+                                                    <div th:each="media: ${label.getMedia()}">
+                                                        <!-- Кнопка-триггер модального окна -->
+                                                        <button style="margin-top: 10px" th:text="${media.getFileName()}" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" th:data-bs-target="${'#modal' + media.getId()}"></button>
 
-                                    <!-- Модальное окно -->
-                                    <div class="modal fade" th:id="${'modal' + media.getId()}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 th:text="${media.getFileName()}" class="modal-title" id="modalLabel"></h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <video class="col-12" controls>
-                                                        <source th:src="${'uploads/' + media.getFileName()}" />
-                                                    </video>
+                                                        <!-- Модальное окно -->
+                                                        <div class="modal fade" th:id="${'modal' + media.getId()}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 th:text="${media.getFileName()}" class="modal-title" id="modalLabel"></h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <video class="col-12" controls>
+                                                                            <source th:src="${'uploads/' + media.getFileName()}" />
+                                                                        </video>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
-                                        </div>
+                                        </h5>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </h5>

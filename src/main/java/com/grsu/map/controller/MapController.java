@@ -110,7 +110,7 @@ public class MapController {
 
     @PostMapping("/search")
     public String search(@RequestParam String search, @RequestParam String searchType, Model model) {
-        List<Label> result = labelService.searchLabel(search, searchType);
+        List<Label> result = labelService.searchLabels(search, searchType);
         model.addAttribute("labels", result);
         return "map";
     }
