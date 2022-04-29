@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 @Service
 public class MediaService {
@@ -27,25 +26,36 @@ public class MediaService {
 
     public String uploadMedia(MultipartFile file) {
         File uploadFolder = new File(uploadPath);
+
         if (!uploadFolder.exists()) {
             uploadFolder.mkdir();
         }
 
-        try {
-            file.transferTo(new File(uploadPath + "/" + file.getOriginalFilename()));
-        } catch (IOException ignored) {
-            //TODO
+        File uploadFile = new File(uploadPath + "/" + file.getOriginalFilename());
+
+        if (!uploadFile.exists()) {
+            try {
+                file.transferTo(uploadFile);
+            } catch (IOException ignored) {
+                //TODO
+            }
+
+            return file.getOriginalFilename();
         }
 
-        return file.getOriginalFilename();
+        return "";
     }
 
     public void addMedia(MultipartFile file, String type, Label label) {
         Media media = new Media();
-        media.setFileName(uploadMedia(file));
-        media.setType(type);
-        label.getMedia().add(media);
-        labelRepository.save(label);
+        String upload;
+
+        if (!(upload = uploadMedia(file)).equals("")) {
+            media.setFileName(upload);
+            media.setType(type);
+            label.getMedia().add(media);
+            labelRepository.save(label);
+        }
     }
 
     public void deleteMedia(long id) {
