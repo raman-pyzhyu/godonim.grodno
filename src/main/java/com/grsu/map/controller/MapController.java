@@ -1,6 +1,7 @@
 package com.grsu.map.controller;
 
 import com.grsu.map.domain.Label;
+import com.grsu.map.domain.Type;
 import com.grsu.map.service.LabelService;
 import com.grsu.map.service.MediaService;
 import org.springframework.security.core.Authentication;
@@ -51,7 +52,7 @@ public class MapController {
             @RequestParam String street,
             @RequestParam String labelContent,
             @RequestParam(required = false) MultipartFile labelImage,
-            @RequestParam String labelType,
+            @RequestParam Type labelType,
             @RequestParam String coordinates,
             @RequestParam(required = false) List<MultipartFile> mediaContent
     ) {
@@ -59,19 +60,19 @@ public class MapController {
 
         if (labelImage.isEmpty()) {
             switch (labelType) {
-                case "1":
+                case HISTORY:
                     label.setImage(HISTORY_ICON);
                     break;
-                case "2":
+                case BIOGRAPHY:
                     label.setImage(BIOGRAPHY_ICON);
                     break;
-                case "3":
+                case PHOTO:
                     label.setImage(PHOTO_ICON);
                     break;
-                case "4":
+                case VIDEO:
                     label.setImage(VIDEO_ICON);
                     break;
-                case "5":
+                case OBJECT:
                     label.setImage(OBJECT_ICON);
                     break;
             }
@@ -86,7 +87,7 @@ public class MapController {
         label.setStreet(street);
 
         if (!mediaContent.isEmpty()) {
-            mediaContent.forEach(file -> mediaService.addMedia(file, labelType, label));
+            mediaContent.forEach(file -> mediaService.addMedia(file, label));
         }
 
         labelService.addLabel(label);
@@ -109,7 +110,7 @@ public class MapController {
     }
 
     @PostMapping("/search")
-    public String search(@RequestParam String search, @RequestParam String searchType, Model model) {
+    public String search(@RequestParam String search, @RequestParam Type searchType, Model model) {
         List<Label> result = labelService.searchLabels(search, searchType);
         model.addAttribute("labels", result);
         return "map";

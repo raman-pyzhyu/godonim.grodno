@@ -1,6 +1,7 @@
 package com.grsu.map.service;
 
 import com.grsu.map.domain.Label;
+import com.grsu.map.domain.Type;
 import com.grsu.map.domain.Media;
 import com.grsu.map.repository.LabelRepository;
 import com.grsu.map.repository.MediaRepository;
@@ -48,13 +49,12 @@ public class MediaService {
         return "";
     }
 
-    public void addMedia(MultipartFile file, String type, Label label) {
+    public void addMedia(MultipartFile file, Label label) {
         Media media = new Media();
         String upload;
 
         if (!(upload = uploadMedia(file)).equals("")) {
             media.setFileName(upload);
-            media.setType(type);
             label.getMedia().add(media);
             labelRepository.save(label);
         }

@@ -28,8 +28,9 @@ public class Label {
     @Column(name = "description", length = 4096)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private String type;
+    private Type type;
 
     @Column(name = "image")
     private String image;

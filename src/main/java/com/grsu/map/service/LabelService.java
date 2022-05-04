@@ -1,6 +1,7 @@
 package com.grsu.map.service;
 
 import com.grsu.map.domain.Label;
+import com.grsu.map.domain.Type;
 import com.grsu.map.repository.LabelRepository;
 import com.grsu.map.repository.MediaRepository;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,8 @@ public class LabelService {
         labelRepository.deleteById(id);
     }
 
-    public List<Label> searchLabels(String search, String searchType) {
+    public List<Label> searchLabels(String search, Type searchType) {
+
         return labelRepository.getLabels(search, searchType);
     }
 

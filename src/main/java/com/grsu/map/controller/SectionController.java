@@ -1,8 +1,8 @@
 package com.grsu.map.controller;
 
 import com.grsu.map.domain.Label;
+import com.grsu.map.domain.Type;
 import com.grsu.map.service.LabelService;
-import com.grsu.map.service.MediaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,18 +16,15 @@ import java.util.Map;
 public class SectionController {
 
     private final LabelService labelService;
-    private final MediaService mediaService;
 
-    public SectionController(LabelService labelService, MediaService mediaService) {
+    public SectionController(LabelService labelService) {
         this.labelService = labelService;
-        this.mediaService = mediaService;
     }
-
 
     @GetMapping("/biography")
     public String getBiographies(Model model) {
         Map<String, List<Label>> labelsByStreet = labelService
-                .getLabelsByStreet(labelService.searchLabels("", "2"));
+                .getLabelsByStreet(labelService.searchLabels("", Type.BIOGRAPHY));
         model.addAttribute("labelsByStreet", labelsByStreet);
         return "biography";
     }
@@ -35,7 +32,7 @@ public class SectionController {
     @GetMapping("/photo")
     public String getPhotos(Model model) {
         Map<String, List<Label>> labelsByStreet = labelService
-                .getLabelsByStreet(labelService.searchLabels("", "3"));
+                .getLabelsByStreet(labelService.searchLabels("", Type.PHOTO));
         model.addAttribute("labelsByStreet", labelsByStreet);
         return "photo";
     }
@@ -43,7 +40,7 @@ public class SectionController {
     @GetMapping("/video")
     public String getVideos(Model model) {
         Map<String, List<Label>> labelsByStreet = labelService
-                .getLabelsByStreet(labelService.searchLabels("", "4"));
+                .getLabelsByStreet(labelService.searchLabels("", Type.VIDEO));
         model.addAttribute("labelsByStreet", labelsByStreet);
         return "video";
     }
@@ -51,7 +48,7 @@ public class SectionController {
     @PostMapping("/searchBiography")
     public String searchBiography(@RequestParam String search, Model model) {
         Map<String, List<Label>> result = labelService
-                .getLabelsByStreet(labelService.searchLabels(search, "2"));
+                .getLabelsByStreet(labelService.searchLabels(search, Type.BIOGRAPHY));
         model.addAttribute("labelsByStreet", result);
         model.addAttribute("search", search);
         return "biography";
@@ -60,7 +57,7 @@ public class SectionController {
     @PostMapping("/searchPhoto")
     public String searchPhoto(@RequestParam String search, Model model) {
         Map<String, List<Label>> result = labelService
-                .getLabelsByStreet(labelService.searchLabels(search, "3"));
+                .getLabelsByStreet(labelService.searchLabels(search, Type.PHOTO));
         model.addAttribute("labelsByStreet", result);
         model.addAttribute("search", search);
         return "photo";
@@ -69,7 +66,7 @@ public class SectionController {
     @PostMapping("/searchVideo")
     public String searchVideo(@RequestParam String search, Model model) {
         Map<String, List<Label>> result = labelService
-                .getLabelsByStreet(labelService.searchLabels(search, "4"));
+                .getLabelsByStreet(labelService.searchLabels(search, Type.VIDEO));
         model.addAttribute("labelsByStreet", result);
         model.addAttribute("search", search);
         return "video";
