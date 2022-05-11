@@ -1,7 +1,6 @@
 package com.grsu.map.service;
 
 import com.grsu.map.domain.Label;
-import com.grsu.map.domain.Type;
 import com.grsu.map.domain.Media;
 import com.grsu.map.repository.LabelRepository;
 import com.grsu.map.repository.MediaRepository;
@@ -61,10 +60,14 @@ public class MediaService {
     }
 
     public void deleteMedia(long id) {
-        Media media = mediaRepository.getById(id);
+        Media media = mediaRepository.findById(id).orElseGet(Media::new);
 
-        if (new File(uploadPath + "/" + media.getFileName()).delete()) {
+        if (deleteFile(media.getFileName())) {
             mediaRepository.deleteById(id);
         }
+    }
+
+    public boolean deleteFile(String fileName) {
+        return new File(uploadPath + "/" + fileName).delete();
     }
 }
