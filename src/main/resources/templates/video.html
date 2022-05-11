@@ -14,13 +14,16 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/map}">Интерактивная карта города Гродно</a>
+        <a class="navbar-brand" th:href="@{/start}">Интерактивная карта города Гродно</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Переключатель навигации">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/map}">Карта</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/biography}">Биография</a>
                 </li>
@@ -30,11 +33,14 @@
                 <li class="nav-item">
                     <a class="nav-link active" th:href="@{/video}">Видео</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/streets}">Улицы</a>
+                </li>
             </ul>
             <form th:action="@{'/searchVideo'}" method="post">
                 <div style="display: inline-flex; position: absolute; top: 50%; transform: translate(0, -50%); right: 10px">
                     <input class="form-control" placeholder="Поиск" type="search" id="site-search" name="search">
-                    <button class="btn btn-secondary">Search</button>
+                    <button style="margin-left: 5px" class="btn btn-secondary">Поиск</button>
                 </div>
             </form>
         </div>
