@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -24,6 +25,13 @@ public class MapController {
     private final static String PHOTO_ICON = "photoIcon.png";
     private final static String VIDEO_ICON = "videoIcon.png";
     private final static String OBJECT_ICON = "objectIcon.png";
+    private final static List<String> defaultIcons = Arrays.asList(
+            HISTORY_ICON,
+            BIOGRAPHY_ICON,
+            PHOTO_ICON,
+            VIDEO_ICON,
+            OBJECT_ICON
+    );
 
 
     public MapController(LabelService labelService, MediaService mediaService) {
@@ -32,8 +40,13 @@ public class MapController {
     }
 
     @GetMapping("/")
+    public String toStart() {
+        return "redirect:/start";
+    }
+
+    @GetMapping("/start")
     public String start() {
-        return "redirect:/map";
+        return "start";
     }
 
     @GetMapping("/map")
@@ -59,22 +72,24 @@ public class MapController {
         Label label = labelService.getLabel(id).orElseGet(Label::new);
 
         if (labelImage.isEmpty()) {
-            switch (labelType) {
-                case HISTORY:
-                    label.setImage(HISTORY_ICON);
-                    break;
-                case BIOGRAPHY:
-                    label.setImage(BIOGRAPHY_ICON);
-                    break;
-                case PHOTO:
-                    label.setImage(PHOTO_ICON);
-                    break;
-                case VIDEO:
-                    label.setImage(VIDEO_ICON);
-                    break;
-                case OBJECT:
-                    label.setImage(OBJECT_ICON);
-                    break;
+            if (label.getImage() == null || defaultIcons.stream().anyMatch(i -> i.equals(label.getImage()))) {
+                switch (labelType) {
+                    case HISTORY:
+                        label.setImage(HISTORY_ICON);
+                        break;
+                    case BIOGRAPHY:
+                        label.setImage(BIOGRAPHY_ICON);
+                        break;
+                    case PHOTO:
+                        label.setImage(PHOTO_ICON);
+                        break;
+                    case VIDEO:
+                        label.setImage(VIDEO_ICON);
+                        break;
+                    case OBJECT:
+                        label.setImage(OBJECT_ICON);
+                        break;
+                }
             }
         } else {
             label.setImage(mediaService.uploadMedia(labelImage));
@@ -114,5 +129,47 @@ public class MapController {
         List<Label> result = labelService.searchLabels(search, searchType);
         model.addAttribute("labels", result);
         return "map";
+    }
+
+    @PostMapping("/delete_label_image")
+    public String deleteLabelImage(@RequestParam long id) {
+        Label label = labelService.getLabel(id).orElseGet(Label::new);
+
+        if (defaultIcons.stream().noneMatch(icon -> icon.equals(label.getImage()))) {
+            switch (label.getType()) {
+                case HISTORY:
+                    if (mediaService.deleteFile(label.getImage())) {
+                        label.setImage(HISTORY_ICON);
+                    }
+                    break;
+                case BIOGRAPHY:
+                    if (mediaService.deleteFile(label.getImage())) {
+                        label.setImage(BIOGRAPHY_ICON);
+                    }
+
+                    break;
+                case PHOTO:
+                    if (mediaService.deleteFile(label.getImage())) {
+                        label.setImage(PHOTO_ICON);
+                    }
+
+                    break;
+                case VIDEO:
+                    if (mediaService.deleteFile(label.getImage())) {
+                        label.setImage(VIDEO_ICON);
+                    }
+
+                    break;
+                case OBJECT:
+                    if (mediaService.deleteFile(label.getImage())) {
+                        label.setImage(OBJECT_ICON);
+                    }
+
+                    break;
+            }
+        }
+
+        labelService.addLabel(label);
+        return "redirect:/map";
     }
 }
