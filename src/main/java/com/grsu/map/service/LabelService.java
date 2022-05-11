@@ -3,23 +3,21 @@ package com.grsu.map.service;
 import com.grsu.map.domain.Label;
 import com.grsu.map.domain.Type;
 import com.grsu.map.repository.LabelRepository;
-import com.grsu.map.repository.MediaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 public class LabelService {
 
     private final LabelRepository labelRepository;
-    private final MediaRepository mediaRepository;
 
-    public LabelService(LabelRepository labelRepository, MediaRepository mediaRepository) {
+    public LabelService(LabelRepository labelRepository) {
         this.labelRepository = labelRepository;
-        this.mediaRepository = mediaRepository;
     }
 
     public void addLabel(Label label) {
@@ -40,11 +38,14 @@ public class LabelService {
     }
 
     public List<Label> searchLabels(String search, Type searchType) {
-
         return labelRepository.getLabels(search, searchType);
     }
 
     public Map<String, List<Label>> getLabelsByStreet(List<Label> labels) {
-        return labels.stream().collect(Collectors.groupingBy((Label::getStreet)));
+        return labels.stream().collect(groupingBy((Label::getStreet)));
+    }
+
+    public List<String> getStreets(String search) {
+        return labelRepository.getStreets(search);
     }
 }
