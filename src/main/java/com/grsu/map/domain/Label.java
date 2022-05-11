@@ -25,7 +25,7 @@ public class Label {
     @Column(name = "street")
     private String street;
 
-    @Column(name = "description", length = 4096)
+    @Column(name = "description", columnDefinition="TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
