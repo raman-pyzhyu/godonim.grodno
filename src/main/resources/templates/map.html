@@ -21,15 +21,42 @@
             ymaps.ready(init);
 
             function init(){
-                myMap = new ymaps.Map("map", {
-                    center: [53.6753, 23.8290],
-                    zoom: 11,
-                    controls: ['zoomControl']
-                }, {
-                    restrictMapArea: true,
-                    suppressMapOpenBlock: true,
-                    yandexMapDisablePoiInteractivity: true
-                });
+
+                if ([[${showStreet != null}]]) {
+                    console.log("in if");
+
+                    let geocoder = ymaps.geocode("Гродно " + [[${showStreet}]]);
+
+                    console.log([[${showStreet}]]);
+
+                    geocoder.then(
+                        function (res) {
+                            myMap = new ymaps.Map("map", {
+                                center: res.geoObjects.get(0).geometry.getCoordinates(),
+                                zoom: 11,
+                                controls: ['zoomControl']
+                            }, {
+                                restrictMapArea: true,
+                                suppressMapOpenBlock: true,
+                                yandexMapDisablePoiInteractivity: true
+                            });
+
+                            myMap.setZoom(16);
+
+                            myMap.balloon.open(res.geoObjects.get(0).geometry.getCoordinates(), [[${showStreet}]]);
+                        }
+                    );
+                } else {
+                    myMap = new ymaps.Map("map", {
+                        center: [53.6753, 23.8290],
+                        zoom: 11,
+                        controls: ['zoomControl']
+                    }, {
+                        restrictMapArea: true,
+                        suppressMapOpenBlock: true,
+                        yandexMapDisablePoiInteractivity: true
+                    });
+                }
 
                 clusterer = new ymaps.Clusterer();
 

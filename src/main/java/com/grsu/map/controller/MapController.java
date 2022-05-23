@@ -50,11 +50,16 @@ public class MapController {
     }
 
     @GetMapping("/map")
-    public String getMap(Model model, Authentication authentication) {
+    public String getMap(Model model, Authentication authentication, String showStreet) {
         List<Label> labels = labelService.getLabels();
         //model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
         model.addAttribute("isAuthenticated", true);
         model.addAttribute("labels", labels);
+
+        if (showStreet != null) {
+            model.addAttribute("showStreet", showStreet);
+        }
+
         return "map";
     }
 

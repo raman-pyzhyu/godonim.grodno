@@ -56,9 +56,12 @@
         <div class="col-5">
             <div class="accordion" id="accordionOutside">
                 <div style="margin-bottom: 2%" th:each="street: ${streets}" class="accordion-item">
+                    <form method="get" th:action="@{'/map'}">
+                        <input type="hidden" th:value="${street}" name="showStreet">
                         <button style="width: 100%; display: inline-block;" th:text="${street}"
-                                class="btn btn-outline-secondary" type="button">
+                                class="btn btn-outline-secondary" type="submit">
                         </button>
+                    </form>
                 </div>
             </div>
         </div>
