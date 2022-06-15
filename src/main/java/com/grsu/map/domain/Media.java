@@ -18,4 +18,7 @@ public class Media {
 
     @Column(name = "file_name")
     private String fileName;
+
+    @Column(name = "description")
+    private String description;
 }

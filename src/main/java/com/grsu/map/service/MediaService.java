@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -37,7 +38,7 @@ public class MediaService {
 
         if (!uploadFile.exists()) {
             try {
-                file.transferTo(uploadFile);
+                file.transferTo(new File(uploadFile.getAbsolutePath()));
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
@@ -59,6 +60,10 @@ public class MediaService {
         }
     }
 
+    public void saveMedia(Media media) {
+        mediaRepository.save(media);
+    }
+
     public void deleteMedia(long id) {
         Media media = mediaRepository.findById(id).orElseGet(Media::new);
 
@@ -69,5 +74,9 @@ public class MediaService {
 
     public boolean deleteFile(String fileName) {
         return new File(uploadPath + "/" + fileName).delete();
+    }
+
+    public Optional<Media> getMedia(long id) {
+       return mediaRepository.findById(id);
     }
 }

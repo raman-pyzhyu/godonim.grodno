@@ -23,3 +23,60 @@ body, html {
 .hide-box h6 {
     cursor: pointer;
 }
+.text-align-center {
+    text-align: center;
+}
+.modal-display {
+    max-width: 80%;
+    width: auto !important;
+    display: inline-block;
+}
+.display-search-bar {
+    display: inline-flex;
+    position: absolute;
+    top: 50%; transform: translate(0, -50%);
+    right: 10px;
+}
+.margin-right-5px {
+    margin-right: 5px;
+}
+.margin-left-5px {
+    margin-left: 5px;
+}
+.margin-top-10px {
+    margin-top: 10px;
+}
+.margin-top-5px {
+    margin-top: 5px;
+}
+.display-edit-button {
+    margin-top: 10px;
+    width: 270px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+.margin-5px {
+    margin: 5px;
+}
+.margin-2px {
+    margin: 2px;
+}
+.width-auto {
+    width: auto;
+}
+.display-flex {
+    display: flex;
+}
+.width-90-percent {
+    width: 90%;
+}
+.display-file-name {
+    margin: 5px;
+    padding: 5px;
+    max-width: 100px;
+    text-align: center;
+}
+.zoom-2 {
+    zoom: 1;
+}

@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Godonim</title>
 
-        <link th:href="@{../css/style.css}" rel='stylesheet'>
+        <link th:href="@{../css/style.css}" type="text/css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <script src="https://api-maps.yandex.ru/2.1/?apikey=5987b379-55f3-49cb-8350-7f90f11c3bdf&lang=ru_RU" type="text/javascript">
@@ -13,246 +13,21 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-        <script type="text/javascript" th:inline="javascript">
+        <script th:src="@{../js/map.js}" type="text/javascript"></script>
+        <script th:inline="javascript">
             /*<![CDATA[*/
-            var myMap
-            var coords
-
-            ymaps.ready(init);
-
-            function init(){
-
-                if ([[${showStreet != null}]]) {
-                    console.log("in if");
-
-                    let geocoder = ymaps.geocode("Гродно " + [[${showStreet}]]);
-
-                    console.log([[${showStreet}]]);
-
-                    geocoder.then(
-                        function (res) {
-                            myMap = new ymaps.Map("map", {
-                                center: res.geoObjects.get(0).geometry.getCoordinates(),
-                                zoom: 11,
-                                controls: ['zoomControl']
-                            }, {
-                                restrictMapArea: true,
-                                suppressMapOpenBlock: true,
-                                yandexMapDisablePoiInteractivity: true
-                            });
-
-                            myMap.setZoom(16);
-
-                            myMap.balloon.open(res.geoObjects.get(0).geometry.getCoordinates(), [[${showStreet}]]);
-                        }
-                    );
-                } else {
-                    myMap = new ymaps.Map("map", {
-                        center: [53.6753, 23.8290],
-                        zoom: 11,
-                        controls: ['zoomControl']
-                    }, {
-                        restrictMapArea: true,
-                        suppressMapOpenBlock: true,
-                        yandexMapDisablePoiInteractivity: true
-                    });
-                }
-
-                clusterer = new ymaps.Clusterer();
-
-                let labels = [[${labels}]];
-
-                labels.forEach(function (value) {
-                    clusterer.add(new ymaps.Placemark(value.coordinates.split(','), {
-                        id: value.id,
-                        coords: value.coordinates,
-                        name: value.name,
-                        street: value.street,
-                        type: value.type,
-                        image: value.image,
-                        media: value.media,
-                        balloonContentHeader: value.name,
-                        balloonContentBody: value.description,
-                        hintContent: value.name
-                    }, {
-                        iconLayout: 'default#image',
-                        iconImageHref: 'uploads/' + value.image,
-                        iconImageSize: [30, 30],
-                        iconImageOffset: [-15, -30],
-                        preset: value.category,
-                        openBalloonOnClick: false
-                    }));
-                })
-
-                myMap.geoObjects.add(clusterer);
-
-                myMap.events.add('click', function (e) {
-                    if ([[${isAuthenticated}]] === false) {
-                        return;
-                    }
-                    document.getElementById('labelForm').reset();
-                    coords = e.get('coords');
-                    document.getElementById('coordsInput').value = coords;
-                    let geocoder = ymaps.geocode(coords, {
-                        kind: 'street'
-                    });
-                    geocoder.then(
-                        function (res) {
-                            document.getElementById('streetInput').value = res.geoObjects.get(0).getThoroughfare();
-                        }
-                    );
-
-                    myMap.balloon.open(coords, {
-                        contentBody:'<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editModal" aria-controls="editModal">' +
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">' +
-                            '<path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"></path>' +
-                            '<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>' +
-                            '</svg>' +
-                            ' Добавить метку ' +
-                            '</button>',
-                    });
-
-                    changeSelect();
-                })
-
-                myMap.geoObjects.events.add('click', function (e) {
-                    var label = e.get("target");
-
-                    if (label.properties._data.type === "PHOTO") {
-                        $('#modalPhotos' + label.properties._data.id).modal("show");
-                    } else if (label.properties._data.type === "VIDEO") {
-                        $('#modalVideos' + label.properties._data.id).modal("show");
-                    } else if (label.properties._data.type === "BIOGRAPHY") {
-                        $('#modalBiography' + label.properties._data.id).modal("show");
-                    } else if (label.properties._data.type === "HISTORY") {
-                        $('#modalHistory' + label.properties._data.id).modal("show");
-                    } else if (label.properties._data.type === "OBJECT") {
-                        $('#modalObject' + label.properties._data.id).modal("show");
-                    }
-                })
-
-                myMap.geoObjects.events.add('contextmenu', function (e) {
-                    if ([[${isAuthenticated}]] === false) {
-                        return;
-                    }
-                    document.getElementById('labelForm').reset();
-                    let label = e.get('target');
-                    coords = label.properties._data.coords.split(',')
-                    document.getElementById('coordsInput').value = coords
-                    document.getElementById('streetInput').value = label.properties._data.street
-                    document.getElementById('labelName').value = label.properties._data.name
-                    document.getElementById('labelType').value = label.properties._data.type
-                    document.getElementById('labelId').value = label.properties._data.id
-
-                    const dropdownMenu = document.getElementById("dropdownMenu");
-
-                    while (dropdownMenu.children.length > 1) {
-                        dropdownMenu.removeChild(dropdownMenu.lastChild);
-                    }
-                    let id, deleteLabelImageBlock;
-
-                    label.properties._data.media.forEach(media => {
-                        var fileElement = document.getElementById("fileElement").cloneNode(true);
-                        fileElement.style.display = "flex";
-
-                        fileElement.children[0].innerText = media.fileName;
-
-                        fileElement.children[2].value = media.id;
-                        fileElement.children[2].disabled = false;
-
-                        dropdownMenu.appendChild(fileElement);
-                    })
-
-                    id = document.getElementById("deleteLabelImageId");
-                    id.value = label.properties._data.id;
-
-                    deleteLabelImageBlock = document.getElementById("deleteLabelImageBlock");
-                    deleteLabelImageBlock.appendChild(id)
-
-                    tinyMCE.activeEditor.execCommand("mceInsertContent", false, label.properties._data.balloonContentBody);
-
-                    myMap.balloon.open(coords, {
-                        contentBody:'<div>' +
-                            '<h6>' + label.properties._data.name + '</h6>' +
-                            '<div class="container">' +
-                            '  <div class="row align-items-start">' +
-                            '    <div class="col">' +
-                            '<button name="editButton" id="editButton" style="margin: 5px" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editModal" aria-controls="editModal">' +
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">' +
-                            '<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"></path>' +
-                            '</svg>' +
-                            ' Изменить метку ' +
-                            '</button>' +
-                            '    </div>' +
-                            '  </div>' +
-                            '  <div class="row align-items-center">' +
-                            '    <div class="col">' +
-                            '<form action="/delete_label" method="post">' +
-                            '<button style="margin: 5px" type="submit" class="btn btn-outline-danger">' +
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">' +
-                            '<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>' +
-                            '<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>' +
-                            '</svg>' +
-                            ' Удалить метку' +
-                            '</button>' +
-                            '<input type="hidden" name="id" value="' + label.properties._data.id + '">' +
-                            '</form>' +
-                            '    </div>\n' +
-                            '  </div>\n' +
-                            '</div>' +
-                            '</div>',
-                    });
-
-                    changeSelect();
-                })
-
-                function changeSelect() {
-                    switch (document.getElementById('labelType').value) {
-                        case 'PHOTO':
-                            document.getElementById('addContentText').textContent = 'Добавить фото';
-                            document.getElementById('mediaContent').setAttribute('accept', "image/*");
-                            document.getElementById('mediaContentBlock').style.display = '';
-                            document.getElementById('labelContentBlock').style.display = 'none';
-                            document.getElementById('dropdown').textContent = 'Добавленные фото';
-                            break
-                        case 'VIDEO':
-                            document.getElementById('addContentText').textContent = 'Добавить видео';
-                            document.getElementById('mediaContent').setAttribute('accept', "video/*");
-                            document.getElementById('mediaContentBlock').style.display = '';
-                            document.getElementById('labelContentBlock').style.display = 'none';
-                            document.getElementById('dropdown').textContent = 'Добавленные видео';
-
-                            break
-                        default:
-                            if (document.getElementById('dropdownMenu').children.length !== 1) {
-                                document.getElementById('mediaContentBlock').style.display = 'none';
-                            } else {
-                                document.getElementById('addContentText').textContent = 'Добавить документ';
-                                document.getElementById('mediaContentBlock').style.display = '';
-                                document.getElementById('mediaContent').setAttribute('accept', "application/pdf");
-                            }
-
-                            document.getElementById('labelContentBlock').style.display = '';
-                            document.getElementById('dropdown').textContent = 'Добавленный документ';
-                            break
-
-                    }
-                }
-
-                document.getElementById('labelType').addEventListener('change', function() {
-                    changeSelect();
-                });
-            }
-
+            let labels = [[${labels}]];
+            let isAuthenticated = [[${isAuthenticated}]];
+            let showStreet = [[${showStreet}]];
             /*]]>*/
         </script>
+        <script src="/js/tinymce.js"></script>
     </head>
     <body style="overflow-x:hidden" id="body">
-
+    <!-- Карта-->
     <div id="map"></div>
-
     <!-- Модальное окно создания/редактирования меток-->
-    <div name="editModal" class="modal fade" id="editModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div name="editModal"  class="modal fade" id="editModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -261,16 +36,16 @@
                 </div>
                 <div class="modal-body">
                     <form id="labelForm" th:action="@{'/add_label'}" enctype="multipart/form-data" method="post">
-                        <div style="margin-top: 10px">
+                        <div class="margin-top-10px">
                             <label for="labelName" class="form-label">Название метки</label>
                             <input class="form-control" type="text" placeholder="Название метки" aria-label="Название метки" name="labelName" id="labelName">
                         </div>
-                        <div id="labelImageBlock" style="margin-top: 10px">
+                        <div id="labelImageBlock" class="margin-top-10px">
                             <label for="labelImage" class="form-label">Изображение метки</label>
                             <input class="form-control" type="file" accept="image/*" name="labelImage" id="labelImage">
                         </div>
                         <div>
-                            <label style="margin-top: 10px"  for="labelType" class="form-label">Выберите тип метки</label>
+                            <label for="labelType" class="form-label margin-top-10px">Выберите тип метки</label>
                             <select class="form-select" aria-label="Выберите тип метки" name="labelType" id="labelType">
                                 <option selected value="HISTORY">История</option>
                                 <option value="BIOGRAPHY">Биография</option>
@@ -278,55 +53,74 @@
                                 <option value="VIDEO">Видео</option>
                                 <option value="OBJECT">Объект</option>
                             </select>
-                            <div style="margin-top: 5px" id="mediaContentBlock">
+                            <div class="margin-top-5px" id="mediaContentBlock">
                                 <label id="addContentText" for="mediaContent" class="form-label"></label>
                                 <input class="form-control" type="file" multiple name="mediaContent" id="mediaContent">
                             </div>
 
                         </div>
-                        <div style="margin-top: 10px" id="labelContentBlock" class="mb-3">
+                        <div id="labelContentBlock" class="mb-3 margin-top-10px">
                             <label for="labelContent" class="form-label">Описание метки</label>
                             <textarea class="form-control" name="labelContent" id="labelContent"></textarea>
                         </div>
                         <input type="hidden" name="coordinates" id="coordsInput">
                         <input type="hidden" name="street" id="streetInput">
                         <input type="hidden" name="id" id="labelId">
-                        <button style="margin-top: 10px" type="submit" class="btn btn-outline-success">Сохранить</button>
+                        <button type="submit" class="btn btn-outline-success display-edit-button">Сохранить</button>
                     </form>
-
-                    <div style="margin-top: 10px" class="btn-group">
-                        <button type="button" id="dropdown" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                        <form th:action="@{'/delete_media'}" method="post">
-                            <div class="dropdown-menu" id="dropdownMenu"  aria-labelledby="dropdown">
-                                <div style="display: none;padding:2px; margin: 2px;" id="fileElement" class="border border-secondary rounded">
-                                    <label id="fileElementName" style="margin-right: 2px"></label>
-                                    <button style="margin: 2px 2px 2px auto;" type="submit" class="btn btn-outline-secondary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
-                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
-                                        </svg>
-                                    </button>
-                                    <input type="hidden" name="id" id="fileElementId" value="0" disabled>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
 
                     <form th:action="@{'/delete_label_image'}" method="post">
                         <div id="deleteLabelImageBlock">
-                            <button style="margin-top: 10px" type="submit" class="btn btn-outline-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <button type="submit" class="btn btn-outline-danger display-edit-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
                                 <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
                             </svg> Удалить изображение метки</button>
                             <input type="hidden" name="id" id="deleteLabelImageId">
                         </div>
                     </form>
+
+                    <button id="editMediaButton" class="btn btn-outline-secondary display-edit-button" data-bs-toggle="modal" href="#editMediaModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z">
+                            </path>
+                        </svg>
+                    </button>
+
                 </div>
             </div>
         </div>
     </div>
-
-    <nav style="padding: 8px; position: relative" class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Модальное окно создания/редактирования медиа-->
+    <div class="modal fade" th:id="${'editMediaModal' + label.getId()}" th:each="label: ${labels}" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактор медиа файлов</h5>
+                    <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#editModal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="fileElement" th:if="${label.getMedia().size() != 0}">
+                        <form th:action="@{'/edit_media_description'}" method="post">
+                            <div class="display-flex margin-5px" th:each="media: ${label.getMedia()}">
+                                <div class="input-group">
+                                    <span th:title="${media.getFileName()}" class="input-group-text" th:text="${media.getFileName()}" id="fileElementName"></span>
+                                    <input th:value="${media.getDescription()}" placeholder="Описание" class="form-control" type="text" name="description" aria-describedby="fileElementName">
+                                    <span class="input-group-text">
+                                        <input class="form-check-input margin-5px" th:value="${media.getId()}" type="checkbox" value="" name="deleteId">
+                                        <label>Удалить</label>
+                                    </span>
+                                </div>
+                                <input th:value="${media.getId()}" type="hidden" name="id">
+                            </div>
+                            <button type="submit" class="btn btn-outline-success display-edit-button">Сохранить изменения</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Панель навигации-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/start}">Интерактивная карта города Гродно</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -342,7 +136,7 @@
                         <a class="nav-link active" aria-current="page" th:href="@{/biography}">Биография</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active"th:href="@{/photo}">Фото</a>
+                        <a class="nav-link active" th:href="@{/photo}">Фото</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" th:href="@{/video}">Видео</a>
@@ -350,28 +144,34 @@
                     <li class="nav-item">
                         <a class="nav-link active" th:href="@{/streets}">Улицы</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/history}">История</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/object}">Объект</a>
+                    </li>
                 </ul>
                 <form th:action="@{'/search'}" method="post">
-                    <div style="display: inline-flex; position: absolute; top: 50%; transform: translate(0, -50%); right: 10px">
-                        <input style="margin-right: 5px" class="form-control" placeholder="Поиск" type="search" id="site-search" name="search">
+                    <div class="display-search-bar">
+                        <input th:value="${search}" class="form-control margin-right-5px" placeholder="Поиск" type="search" id="site-search" name="search">
                         <div>
-                            <select style="width: auto" class="form-select" name="searchType">
-                                <option value="UNKNOWN">Тип метки</option>
-                                <option value="HISTORY">История</option>
-                                <option value="BIOGRAPHY">Биография</option>
-                                <option value="PHOTO">Фото</option>
-                                <option value="VIDEO">Видео</option>
+                            <select class="form-select width-auto" name="searchType">
+                                <option th:selected="${searchType.toString() == 'UNKNOWN'}" value="UNKNOWN">Тип метки</option>
+                                <option th:selected="${searchType.toString() == 'HISTORY'}" value="HISTORY">История</option>
+                                <option th:selected="${searchType.toString() == 'BIOGRAPHY'}" value="BIOGRAPHY">Биография</option>
+                                <option th:selected="${searchType.toString() == 'PHOTO'}" value="PHOTO">Фото</option>
+                                <option th:selected="${searchType.toString() == 'VIDEO'}" value="VIDEO">Видео</option>
+                                <option th:selected="${searchType.toString() == 'OBJECT'}" value="OBJECT">Объект</option>
                             </select>
                         </div>
-                        <button style="margin-left: 5px" class="btn btn-secondary">Поиск</button>
+                        <button class="btn btn-secondary margin-left-5px">Поиск</button>
                     </div>
                 </form>
             </div>
         </div>
     </nav>
-
      <!-- Модальное окно с фото -->
-    <div class="modal fade" th:id="${'modalPhotos' + label.getId()}" th:if="${label.getType().toString() == 'PHOTO'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade text-align-center" th:id="${'modalPhotos' + label.getId()}" th:if="${label.getType().toString() == 'PHOTO'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -384,16 +184,19 @@
                                     <button th:if="${media.getId() == label.getMedia().iterator().next().getId()}" th:each="media, iterStat  : ${label.getMedia()}" type="button" data-bs-target="#carouselPhotoIndicators" th:data-bs-slide-to="${iterStat.index}" class="active" aria-current="true"></button>
                                     <button th:if="${media.getId() != label.getMedia().iterator().next().getId()}" th:each="media, iterStat : ${label.getMedia()}" type="button" data-bs-target="#carouselPhotoIndicators" th:data-bs-slide-to="${iterStat.index}" aria-current="true"></button>
                                 </div>
-                                <div  class="carousel-inner">
+                                <div class="carousel-inner">
                                     <div th:if="${media.getId() == label.getMedia().iterator().next().getId()}" th:each="media : ${label.getMedia()}" class="carousel-item active">
-                                        <img th:src="${'uploads/' + media.getFileName()}" class="d-block w-100">
+                                        <img th:src="${'/../uploads/' + media.getFileName()}" class="d-block w-100">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <h2 th:text="${media.getDescription()}"></h2>
+                                        </div>
                                     </div>
                                     <div th:if="${media.getId() != label.getMedia().iterator().next().getId()}" th:each="media : ${label.getMedia()}" class="carousel-item">
-                                        <img th:src="${'uploads/' + media.getFileName()}" class="d-block w-100">
+                                        <img th:src="${'/../uploads/' + media.getFileName()}" class="d-block w-100">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <h2 th:text="${media.getDescription()}"></h2>
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <p th:text="lafafl"></p>
                                 </div>
                                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselPhotoIndicators" data-bs-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -404,14 +207,15 @@
                                     <span class="visually-hidden">Next</span>
                                 </button>
                             </div>
+
+                            <div class="margin-5px" th:utext="${label.getDescription()}"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
     <!-- Модальное окно с видео -->
-    <div class="modal fade" th:id="${'modalVideos' + label.getId()}" th:if="${label.getType().toString() == 'VIDEO'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div  class="modal fade text-align-center" th:id="${'modalVideos' + label.getId()}" th:if="${label.getType().toString() == 'VIDEO'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-display">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 th:text="${label.getName()}" class="modal-title"></h5>
@@ -420,7 +224,7 @@
                 <div class="modal-body">
                     <div th:each="media: ${label.getMedia()}">
                         <!-- Кнопка-триггер модального окна -->
-                        <button style="margin-top: 10px" th:text="${media.getFileName()}" type="button" class="btn btn-outline-secondary" data-toggle="modal" th:data-target="${'#modalVideo' + media.getId()}" data-dismiss="modal"></button>
+                        <button th:text="${media.getFileName()}" type="button" class="btn btn-outline-secondary margin-top-10px" data-toggle="modal" th:data-target="${'#modalVideo' + media.getId()}" data-dismiss="modal"></button>
 
                         <!-- Модальное окно -->
                         <div class="modal fade" th:id="${'modalVideo' + media.getId()}" tabindex="-1" aria-hidden="true">
@@ -439,14 +243,16 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="margin-5px" th:utext="${label.getDescription()}"></div>
+
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Модальное окно с биографией -->
-    <div style="text-align: center" class="modal fade" th:id="${'modalBiography' + label.getId()}" th:if="${label.getType().toString() == 'BIOGRAPHY'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div style="max-width: 90%; width: auto !important; display: inline-block;" class="modal-dialog">
+    <div class="modal fade text-align-center" th:id="${'modalBiography' + label.getId()}" th:if="${label.getType().toString() == 'BIOGRAPHY'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-display modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 th:text="${label.getName()}" class="modal-title"></h5>
@@ -459,10 +265,9 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно с историей -->
-    <div style="text-align: center" class="modal fade" th:id="${'modalHistory' + label.getId()}" th:if="${label.getType().toString() == 'HISTORY'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div  style="max-width: 90%; width: auto !important; display: inline-block;" class="modal-dialog">
+    <div class="modal fade text-align-center" th:id="${'modalHistory' + label.getId()}" th:if="${label.getType().toString() == 'HISTORY'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-display">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 th:text="${label.getName()}" class="modal-title"></h5>
@@ -474,10 +279,9 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно с объектом -->
-    <div style="text-align: center" class="modal fade" th:id="${'modalObject' + label.getId()}" th:if="${label.getType().toString() == 'OBJECT'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div style="max-width: 90%; width: auto !important; display: inline-block;" class="modal-dialog">
+    <div class="modal fade text-align-center" th:id="${'modalObject' + label.getId()}" th:if="${label.getType().toString() == 'OBJECT'}" th:each="label: ${labels}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-display">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 th:text="${label.getName()}" class="modal-title"></h5>
@@ -489,47 +293,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-            tinymce.init({
-                height : "300",
-                selector: 'textarea',
-                menubar: false,
-                plugins: 'lists link image media',
-                toolbar1: 'undo redo bold italic underline forecolor backcolor | fontfamily fontsize | link | image media',
-                toolbar2: 'alignleft aligncenter alignjustify alignright | numlist bullist',
-                toolbar_mode: 'floating',
-                tinycomments_mode: 'embedded',
-                tinycomments_author: 'Author name',
-                file_picker_types: 'image media',
-                file_picker_callback: function(callback, value, meta){
-                    let input = document.createElement('input');
-                    input.setAttribute('type', 'file');
-                    input.setAttribute('accept', 'image/*,video/*');
-                    input.onchange = function () {
-                        let file = this.files[0];
-                        let reader = new FileReader();
-                        reader.onload = async function () {
-                            let formData = new FormData();
-                            formData.append('file', file);
-                            let response = await fetch('/upload', {
-                                method: 'POST',
-                                body: formData
-                            });
-                            let result = await response.json();
-                            callback(result.location, {alt: 'My alt text'});
-                        };
-                        reader.readAsDataURL(file);
-                    };
-                    input.click();
-                }
-            });
-
-            document.addEventListener('focusin', (e) => {
-                if (e.target.closest(".tox-tinymce-aux, .moxman-window, .tam-assetmanager-root") !== null) {
-                    e.stopImmediatePropagation();
-                }
-            });
-        </script>
     </body>
 </html>

@@ -5,7 +5,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.SortedSet;
 
 @Setter
 @Getter
@@ -40,5 +42,6 @@ public class Label {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "label_id")
+    @OrderBy("id")
     private Set<Media> media = new HashSet<>();
 }

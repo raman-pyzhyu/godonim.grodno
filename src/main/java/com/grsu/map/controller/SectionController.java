@@ -45,6 +45,22 @@ public class SectionController {
         return "video";
     }
 
+    @GetMapping("/history")
+    public String getHistories(Model model) {
+        Map<String, List<Label>> labelsByStreet = labelService
+                .getLabelsByStreet(labelService.searchLabels("", Type.HISTORY));
+        model.addAttribute("labelsByStreet", labelsByStreet);
+        return "history";
+    }
+
+    @GetMapping("/object")
+    public String getObjects(Model model) {
+        Map<String, List<Label>> labelsByStreet = labelService
+                .getLabelsByStreet(labelService.searchLabels("", Type.OBJECT));
+        model.addAttribute("labelsByStreet", labelsByStreet);
+        return "object";
+    }
+
     @PostMapping("/search_biography")
     public String searchBiography(@RequestParam String search, Model model) {
         Map<String, List<Label>> result = labelService
@@ -70,6 +86,24 @@ public class SectionController {
         model.addAttribute("labelsByStreet", result);
         model.addAttribute("search", search);
         return "video";
+    }
+
+    @PostMapping("/search_history")
+    public String searchHistory(@RequestParam String search, Model model) {
+        Map<String, List<Label>> result = labelService
+                .getLabelsByStreet(labelService.searchLabels(search, Type.HISTORY));
+        model.addAttribute("labelsByStreet", result);
+        model.addAttribute("search", search);
+        return "history";
+    }
+
+    @PostMapping("/search_object")
+    public String searchObject(@RequestParam String search, Model model) {
+        Map<String, List<Label>> result = labelService
+                .getLabelsByStreet(labelService.searchLabels(search, Type.OBJECT));
+        model.addAttribute("labelsByStreet", result);
+        model.addAttribute("search", search);
+        return "object";
     }
 
     @GetMapping("/streets")

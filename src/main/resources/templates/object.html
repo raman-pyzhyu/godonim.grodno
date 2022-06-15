@@ -43,7 +43,7 @@
                     <a class="nav-link active" th:href="@{/object}">Объект</a>
                 </li>
             </ul>
-            <form th:action="@{'/search_video'}" method="post">
+            <form th:action="@{'/search_object'}" method="post">
                 <div style="display: inline-flex; position: absolute; top: 50%; transform: translate(0, -50%); right: 10px">
                     <input class="form-control" placeholder="Поиск" type="search" id="site-search" name="search">
                     <button style="margin-left: 5px" class="btn btn-secondary">Поиск</button>
@@ -52,10 +52,9 @@
         </div>
     </div>
 </nav>
+<h1 style="text-align: center">Объект</h1>
+<h2 style="text-align: center" th:if="${search != null and search != ''}" th:text="'Результаты поиска по запросу: ' + ${search}"></h2>
 <div class="container page-container">
-    <h1 style="text-align: center">Видео</h1>
-    <h2 style="text-align: center" th:if="${search != null and search != '' and labelsByStreet.size() != 0}" th:text="'Результаты поиска по запросу: ' + ${search}"></h2>
-    <h2 style="text-align: center" th:if="${search != null and search != '' and labelsByStreet.size() == 0}" th:text="'Нет результатов по запросу: ' + ${search}"></h2>
     <div class="row justify-content-md-center">
         <div class="col">
         </div>
@@ -82,29 +81,8 @@
                                             <div th:id="collapse + ${label.getId()}" class="accordion-collapse collapse"
                                                  th:aria-labelledby="heading + ${label.getId()}" data-bs-parent="#accordionInside">
                                                 <div class="accordion-body">
-
-                                                    <div th:each="media: ${label.getMedia()}">
-                                                        <!-- Кнопка-триггер модального окна -->
-                                                        <button style="margin-top: 10px" th:text="${media.getFileName()}" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" th:data-bs-target="${'#modal' + media.getId()}"></button>
-
-                                                        <!-- Модальное окно -->
-                                                        <div class="modal fade" th:id="${'modal' + media.getId()}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-lg">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 th:text="${media.getFileName()}" class="modal-title" id="modalLabel"></h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <video class="col-12" controls>
-                                                                            <source th:src="${'uploads/' + media.getFileName()}" />
-                                                                        </video>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
+                                                    <div th:utext="${label.getDescription()}"></div>
+                                                    <a th:each="media: ${label.getMedia()}" target="_blank" th:text="${media.getFileName()}" th:href="${'uploads/' + media.getFileName()}"></a>
                                                 </div>
                                             </div>
                                         </h5>
