@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -jar target/Interactive-map-0.0.1-SNAPSHOT.jar target/*.war
+web:    java $JAVA_OPTS -jar target/Interactive-map-0.0.1-SNAPSHOT.jar --port $PORT target/*.war
