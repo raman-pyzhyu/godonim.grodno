@@ -34,7 +34,8 @@ public class MediaService {
             uploadFolder.mkdir();
         }
 
-        File uploadFile = new File(uploadPath + "/" + file.getOriginalFilename());
+        File uploadFile = new File(file.getOriginalFilename());
+        System.out.println(uploadFile.getAbsolutePath());
 
         if (!uploadFile.exists()) {
             try {
