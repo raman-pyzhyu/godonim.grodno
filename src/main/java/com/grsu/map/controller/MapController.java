@@ -75,7 +75,7 @@ public class MapController {
             @RequestParam String labelImage,
             @RequestParam Type labelType,
             @RequestParam String coordinates,
-            @RequestParam(required = false) List<MultipartFile> mediaContent
+            @RequestParam String mediaContent
     ) {
         Label label = labelService.getLabel(id).orElseGet(Label::new);
 
@@ -110,7 +110,9 @@ public class MapController {
         label.setStreet(street);
 
         if (!mediaContent.isEmpty()) {
-            mediaContent.forEach(file -> mediaService.addMedia(file, label));
+            Media media = new Media();
+            media.setFileName(mediaContent);
+            label.getMedia().add(media);
         }
 
         labelService.addLabel(label);
