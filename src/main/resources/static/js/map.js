@@ -41,7 +41,7 @@ function init(){
                 hintContent: value.name
             }, {
                 iconLayout: 'default#image',
-                iconImageHref: '/../uploads/' + value.image,
+                iconImageHref: '/../css/uploads/' + value.image,
                 iconImageSize: [30, 30],
                 iconImageOffset: [-15, -30],
                 preset: value.category,

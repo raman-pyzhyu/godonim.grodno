@@ -22,7 +22,7 @@ public class MapController {
 
     private final LabelService labelService;
     private final MediaService mediaService;
-    private final static String HISTORY_ICON = "history123.png";
+    private final static String HISTORY_ICON = "history.png";
     private final static String BIOGRAPHY_ICON = "biography.png";
     private final static String PHOTO_ICON = "photo.png";
     private final static String VIDEO_ICON = "video.png";
