@@ -34,11 +34,11 @@ public class MediaService {
             uploadFolder.mkdir();
         }
 
-        File uploadFile = new File(file.getOriginalFilename());
+        File uploadFile = new File(uploadPath + "/" + file.getOriginalFilename());
 
         if (!uploadFile.exists()) {
             try {
-                file.transferTo(new File(uploadPath + "/" + uploadFile.getAbsolutePath()));
+                file.transferTo(new File(uploadFile.getAbsolutePath()));
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
