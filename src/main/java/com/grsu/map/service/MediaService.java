@@ -35,11 +35,10 @@ public class MediaService {
         }
 
         File uploadFile = new File(file.getOriginalFilename());
-        System.out.println(uploadFile.getAbsolutePath());
 
         if (!uploadFile.exists()) {
             try {
-                file.transferTo(new File(uploadFile.getAbsolutePath()));
+                file.transferTo(new File(uploadPath + "/" + uploadFile.getAbsolutePath()));
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }

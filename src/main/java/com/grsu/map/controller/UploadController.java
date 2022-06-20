@@ -23,7 +23,7 @@ public class UploadController {
     @PostMapping
     public ResponseEntity<String> upload(@RequestParam(required = false) MultipartFile file) throws IOException {
         String path = mediaService.uploadMedia(file);
-        String location = "{ \"location\":\"uploads/" + path + "\"}";
+        String location = "{ \"location\":\"css/uploads/" + path + "\"}";
         return ResponseEntity.ok(location);
     }
 }
