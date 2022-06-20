@@ -22,11 +22,11 @@ public class MapController {
 
     private final LabelService labelService;
     private final MediaService mediaService;
-    private final static String HISTORY_ICON = "history.png";
-    private final static String BIOGRAPHY_ICON = "biography.png";
-    private final static String PHOTO_ICON = "photo.png";
-    private final static String VIDEO_ICON = "video.png";
-    private final static String OBJECT_ICON = "object.png";
+    private final static String HISTORY_ICON = "/css/uploads/history.png";
+    private final static String BIOGRAPHY_ICON = "/css/uploads/biography.png";
+    private final static String PHOTO_ICON = "/css/uploads/photo.png";
+    private final static String VIDEO_ICON = "/css/uploads/video.png";
+    private final static String OBJECT_ICON = "/css/uploads/object.png";
     private final static List<String> defaultIcons = Arrays.asList(
             HISTORY_ICON,
             BIOGRAPHY_ICON,
@@ -72,7 +72,7 @@ public class MapController {
             @RequestParam String labelName,
             @RequestParam String street,
             @RequestParam String labelContent,
-            @RequestParam(required = false) MultipartFile labelImage,
+            @RequestParam String labelImage,
             @RequestParam Type labelType,
             @RequestParam String coordinates,
             @RequestParam(required = false) List<MultipartFile> mediaContent
@@ -100,7 +100,7 @@ public class MapController {
                 }
             }
         } else {
-            label.setImage(mediaService.uploadMedia(labelImage));
+            label.setImage(labelImage);
         }
 
         label.setName(labelName);
