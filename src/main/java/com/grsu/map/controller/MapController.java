@@ -22,11 +22,11 @@ public class MapController {
 
     private final LabelService labelService;
     private final MediaService mediaService;
-    private final static String HISTORY_ICON = "historyIcon.png";
-    private final static String BIOGRAPHY_ICON = "biographyIcon.png";
-    private final static String PHOTO_ICON = "photoIcon.png";
-    private final static String VIDEO_ICON = "videoIcon.png";
-    private final static String OBJECT_ICON = "objectIcon.png";
+    private final static String HISTORY_ICON = "history123.png";
+    private final static String BIOGRAPHY_ICON = "biography.png";
+    private final static String PHOTO_ICON = "photo.png";
+    private final static String VIDEO_ICON = "video.png";
+    private final static String OBJECT_ICON = "object.png";
     private final static List<String> defaultIcons = Arrays.asList(
             HISTORY_ICON,
             BIOGRAPHY_ICON,
